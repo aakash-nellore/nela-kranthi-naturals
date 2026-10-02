@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { SITE_IMAGES } from "@/lib/images";
+import ShowcaseImage from "@/components/home/ShowcaseImage";
 
 interface ProcessStep {
   step: string;
@@ -149,15 +149,19 @@ export default function SolarDehydration() {
         {/* Real Solar Dehydration Process Photograph (rendered when configured) */}
         {SITE_IMAGES.solarDehydrationProcess ? (
           <div className="max-w-4xl mx-auto mb-12 sm:mb-16">
-            <div className="relative w-full aspect-16/9 sm:aspect-21/9 rounded-2xl sm:rounded-3xl overflow-hidden border border-[#ded5c5] shadow-xs bg-[#efe7db] group">
-              <Image
-                src={SITE_IMAGES.solarDehydrationProcess}
-                alt="Solar Dehydration Processing Unit and Hygiene Standards at Nela Kranthi Naturals, Sydapuram"
-                fill
-                sizes="(max-width: 1024px) 100vw, 896px"
-                className="object-cover transition-transform duration-500 group-hover:scale-102"
-              />
-            </div>
+            <ShowcaseImage
+              src={SITE_IMAGES.solarDehydrationProcess}
+              alt="Solar Dehydration Processing Unit and Hygiene Standards at Nela Kranthi Naturals, Sydapuram"
+              title="Solar Dehydration Chamber"
+              subtitle="Controlled Solar Drying Facility, Sydapuram Unit"
+              badgeText="Process Photography Ready"
+              icon="solar"
+              aspectRatioClass="aspect-16/9 sm:aspect-21/9"
+              sizes="(max-width: 1024px) 100vw, 896px"
+              bgClass="bg-[#efe7db]"
+              borderClass="border-[#ded5c5]"
+              badgeBgClass="bg-white"
+            />
           </div>
         ) : null}
 

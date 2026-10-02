@@ -35,12 +35,25 @@ export function resolveProductImage(imageUrl?: string | null): string {
   }
   const trimmed = imageUrl.trim();
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, "");
+
+  // Handle Supabase dashboard preview links if copied accidentally
+  if (trimmed.includes("supabase.com/dashboard/project/") && trimmed.includes("preview=") && supabaseUrl) {
+    try {
+      const parsedUrl = new URL(trimmed);
+      const preview = parsedUrl.searchParams.get("preview");
+      if (preview) {
+        return `${supabaseUrl}/storage/v1/object/public/product-images/${encodeURIComponent(preview)}`;
+      }
+    } catch {
+      // Fall through
+    }
+  }
+
   // 1. Remote HTTP/HTTPS URL (e.g. Supabase Storage bucket)
   if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
     return trimmed;
   }
-
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, "");
 
   // 2. Relative Supabase Storage path starting with /storage/ or storage/
   if (trimmed.startsWith("/storage/v1/object/public/") && supabaseUrl) {

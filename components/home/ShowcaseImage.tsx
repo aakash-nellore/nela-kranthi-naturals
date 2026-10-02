@@ -32,24 +32,67 @@ export default function ShowcaseImage({
   borderClass = "border-[#ded4c3]",
   badgeBgClass = "bg-[#f8f5ee]",
 }: ShowcaseImageProps) {
-  const [hasError, setHasError] = useState(false);
   const cleanSrc =
     typeof src === "string" && src.trim().length > 0 ? src.trim() : null;
 
-  // Real Image: Render Next.js Image when source is present and not errored
-  if (cleanSrc && !hasError) {
+  const [failedUrls, setFailedUrls] = useState<Record<string, boolean>>({});
+  const [altAttempted, setAltAttempted] = useState<Record<string, boolean>>({});
+
+  // Derive alternative candidate (e.g. %20.jpg -> .jpg, or .jpg -> .jpeg)
+  let alternativeCandidate: string | null = null;
+  if (cleanSrc) {
+    if (cleanSrc.includes("%20.jpg")) {
+      alternativeCandidate = cleanSrc.replace("%20.jpg", ".jpg");
+    } else if (cleanSrc.endsWith(".jpg")) {
+      alternativeCandidate = cleanSrc.replace(/\.jpg$/, ".jpeg");
+    } else if (cleanSrc.endsWith(".jpeg")) {
+      alternativeCandidate = cleanSrc.replace(/\.jpeg$/, ".jpg");
+    }
+  }
+
+  // Determine current active URL to attempt
+  const hasPrimaryFailed = cleanSrc ? Boolean(failedUrls[cleanSrc]) : false;
+  const shouldUseAlt = Boolean(
+    cleanSrc &&
+      hasPrimaryFailed &&
+      alternativeCandidate &&
+      altAttempted[cleanSrc] &&
+      !failedUrls[alternativeCandidate]
+  );
+
+  const activeSrc = shouldUseAlt
+    ? alternativeCandidate
+    : !hasPrimaryFailed
+    ? cleanSrc
+    : null;
+
+  const handleImageError = () => {
+    if (!cleanSrc) return;
+
+    if (!hasPrimaryFailed) {
+      setFailedUrls((prev) => ({ ...prev, [cleanSrc]: true }));
+      if (alternativeCandidate && !altAttempted[cleanSrc]) {
+        setAltAttempted((prev) => ({ ...prev, [cleanSrc]: true }));
+      }
+    } else if (alternativeCandidate) {
+      setFailedUrls((prev) => ({ ...prev, [alternativeCandidate]: true }));
+    }
+  };
+
+  // Real Image: Render Next.js Image when an active source is present and hasn't failed
+  if (activeSrc) {
     return (
       <div
         className={`relative w-full ${aspectRatioClass} rounded-2xl overflow-hidden border ${borderClass} ${bgClass} shadow-2xs group`}
       >
         <Image
-          src={cleanSrc}
+          src={activeSrc}
           alt={alt}
           fill
           priority={priority}
           sizes={sizes}
           className="object-cover transition-transform duration-500 group-hover:scale-105"
-          onError={() => setHasError(true)}
+          onError={handleImageError}
         />
       </div>
     );
