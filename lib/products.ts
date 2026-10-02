@@ -20,8 +20,14 @@ export interface SupabaseProductRow {
 
 /**
  * Resolves a product image candidate.
- * Returns the remote URL or existing public local path, or an empty string if null, empty,
- * or referencing a local file that has not yet been placed in /public.
+ * Supports:
+ * 1. Full remote URLs (e.g. https://*.supabase.co/storage/v1/object/public/product-images/banana-powder.jpg)
+ * 2. Bare filenames from Supabase Storage 'product-images' bucket (e.g. banana-powder.jpg)
+ * 3. Bucket-relative paths (e.g. product-images/banana-powder.jpg or /storage/v1/object/public/product-images/...)
+ * 4. Local files in /public (only if they exist on disk)
+ *
+ * If null, empty, unuploaded, or not found, returns "" so ProductImage renders
+ * the graceful fallback placeholder without layout shift or broken image errors.
  */
 export function resolveProductImage(imageUrl?: string | null): string {
   if (!imageUrl || typeof imageUrl !== "string" || !imageUrl.trim()) {
@@ -34,22 +40,41 @@ export function resolveProductImage(imageUrl?: string | null): string {
     return trimmed;
   }
 
-  // 2. Local public path (e.g. /images/products/banana-powder.jpg)
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, "");
+
+  // 2. Relative Supabase Storage path starting with /storage/ or storage/
+  if (trimmed.startsWith("/storage/v1/object/public/") && supabaseUrl) {
+    return `${supabaseUrl}${trimmed}`;
+  }
+  if (trimmed.startsWith("storage/v1/object/public/") && supabaseUrl) {
+    return `${supabaseUrl}/${trimmed}`;
+  }
+
+  // 3. Bucket-relative path (e.g. "product-images/banana-powder.jpg" or "/product-images/banana-powder.jpg")
+  if (trimmed.replace(/^\//, "").startsWith("product-images/") && supabaseUrl) {
+    const cleanPath = trimmed.replace(/^\//, "");
+    return `${supabaseUrl}/storage/v1/object/public/${cleanPath}`;
+  }
+
+  // 4. Bare filename uploaded to the 'product-images' bucket (e.g. "banana-powder.jpg")
+  if (!trimmed.includes("/") && supabaseUrl && /\.(jpe?g|png|webp|avif|gif|svg)$/i.test(trimmed)) {
+    return `${supabaseUrl}/storage/v1/object/public/product-images/${trimmed}`;
+  }
+
+  // 5. Local public path (e.g. /images/products/banana-powder.jpg)
   if (trimmed.startsWith("/")) {
     try {
       const publicFilePath = path.join(process.cwd(), "public", trimmed);
       if (fs.existsSync(publicFilePath)) {
         return trimmed;
       }
+      return "";
     } catch {
-      // In serverless / edge where fs might not be available, return candidate
-      return trimmed;
+      return "";
     }
-    // File not found on disk yet; treat as unuploaded/placeholder
-    return "";
   }
 
-  return trimmed;
+  return "";
 }
 
 /**

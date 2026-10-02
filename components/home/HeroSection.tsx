@@ -1,5 +1,7 @@
 import React from "react";
 import Link from "next/link";
+import { SITE_IMAGES } from "@/lib/images";
+import ShowcaseImage from "@/components/home/ShowcaseImage";
 
 export default function HeroSection() {
   return (
@@ -159,38 +161,20 @@ export default function HeroSection() {
                   </span>
                 </div>
 
-                {/* 
-                  VISUAL PLACEHOLDER CONTAINER:
-                  Ready to be replaced with <Image src="/images/hero-products.jpg" alt="..." fill />
-                  once official product photography is added to /public.
-                */}
-                <div className="relative w-full aspect-4/3 rounded-2xl bg-[#efe7db] border border-[#ded4c3] flex flex-col items-center justify-center p-6 text-center overflow-hidden group">
-                  <div className="w-16 h-16 rounded-2xl bg-[#2d6a4f] text-[#fcfaf6] flex items-center justify-center mb-3 shadow-md">
-                    <svg
-                      className="w-9 h-9"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.75"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
-                      <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
-                    </svg>
-                  </div>
-
-                  <p className="font-serif font-bold text-lg text-[#1b4332]">
-                    Natural Harvest Showcase
-                  </p>
-                  <p className="text-xs text-[#52796f] max-w-xs mt-1">
-                    Solar-Dehydrated Fruits, Farm Greens &amp; Natural Powders
-                  </p>
-                  <p className="mt-3 text-[11px] font-medium text-[#7d6c56] bg-[#f8f5ee] px-3 py-1 rounded-full border border-[#ded5c5]">
-                    Product Photography Ready
-                  </p>
-                </div>
+                {/* Real Photograph Showcase with Graceful Placeholder Fallback */}
+                <ShowcaseImage
+                  src={SITE_IMAGES.heroHarvestShowcase}
+                  alt="Natural Harvest Showcase - Solar-Dehydrated Fruits, Farm Greens & Natural Powders by Nela Kranthi Naturals"
+                  title="Natural Harvest Showcase"
+                  subtitle="Solar-Dehydrated Fruits, Farm Greens & Natural Powders"
+                  badgeText="Product Photography Ready"
+                  icon="leaf"
+                  bgClass="bg-[#efe7db]"
+                  borderClass="border-[#ded4c3]"
+                  badgeBgClass="bg-[#f8f5ee]"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
+                  priority
+                />
 
                 {/* Categories Grid Preview */}
                 <div className="mt-5 grid grid-cols-2 gap-2.5">

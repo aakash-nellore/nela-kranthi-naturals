@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SITE_IMAGES } from "@/lib/images";
+import ShowcaseImage from "@/components/home/ShowcaseImage";
 
 export const metadata: Metadata = {
   title: "Solar Dehydration Process",
@@ -371,39 +373,19 @@ export default function SolarDehydrationPage() {
                     </span>
                   </div>
 
-                  {/* 
-                    VISUAL PLACEHOLDER CONTAINER:
-                    Ready to be replaced with:
-                    <Image src="/images/process/solar-dehydration-unit.jpg" alt="Solar Dehydration Processing Unit at Sydapuram" fill className="object-cover" />
-                    when official photographs of the solar dryer / dehydration facility are added to /public.
-                  */}
-                  <div className="relative w-full aspect-4/3 rounded-2xl bg-[#f4ede3] border border-[#ded5c5] flex flex-col items-center justify-center p-6 text-center overflow-hidden">
-                    <div className="w-16 h-16 rounded-2xl bg-[#2d6a4f] text-[#fcfaf6] flex items-center justify-center mb-3 shadow-md">
-                      <svg
-                        className="w-9 h-9"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.75"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <circle cx="12" cy="12" r="4" />
-                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-                      </svg>
-                    </div>
-
-                    <p className="font-serif font-bold text-lg text-[#1b4332]">
-                      Solar Dehydration Chamber
-                    </p>
-                    <p className="text-xs text-[#52796f] max-w-xs mt-1">
-                      Controlled Solar Drying Facility, Sydapuram Unit
-                    </p>
-                    <p className="mt-3 text-[11px] font-medium text-[#7d6c56] bg-white px-3 py-1 rounded-full border border-[#ded5c5]">
-                      Process Photography Ready
-                    </p>
-                  </div>
+                  {/* Real Photograph Showcase with Graceful Placeholder Fallback */}
+                  <ShowcaseImage
+                    src={SITE_IMAGES.solarDehydrationProcess}
+                    alt="Solar Dehydration Processing Facility at Nela Kranthi Naturals, Sydapuram"
+                    title="Solar Dehydration Chamber"
+                    subtitle="Controlled Solar Drying Facility, Sydapuram Unit"
+                    badgeText="Process Photography Ready"
+                    icon="solar"
+                    bgClass="bg-[#f4ede3]"
+                    borderClass="border-[#ded5c5]"
+                    badgeBgClass="bg-white"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
+                  />
 
                   {/* Card Bottom Metadata */}
                   <div className="mt-5 pt-4 border-t border-[#f0eae0] flex items-center justify-between text-xs text-[#52796f]">

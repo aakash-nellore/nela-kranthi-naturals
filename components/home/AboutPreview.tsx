@@ -1,5 +1,7 @@
 import React from "react";
 import Link from "next/link";
+import { SITE_IMAGES } from "@/lib/images";
+import ShowcaseImage from "@/components/home/ShowcaseImage";
 
 interface HighlightItem {
   id: string;
@@ -183,38 +185,19 @@ export default function AboutPreview() {
                   </span>
                 </div>
 
-                {/* 
-                  VISUAL PLACEHOLDER CONTAINER:
-                  Ready to be replaced with <Image src="/images/about/sydapuram-unit.jpg" alt="Nela Kranthi Naturals Sydapuram Unit" fill className="object-cover" />
-                  when physical business photography is added to /public.
-                */}
-                <div className="relative w-full aspect-4/3 rounded-2xl bg-[#f4ede3] border border-[#ded5c5] flex flex-col items-center justify-center p-6 text-center overflow-hidden">
-                  <div className="w-16 h-16 rounded-2xl bg-[#2d6a4f] text-[#fcfaf6] flex items-center justify-center mb-3 shadow-md">
-                    <svg
-                      className="w-9 h-9"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.75"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
-                      <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
-                    </svg>
-                  </div>
-
-                  <p className="font-serif font-bold text-lg text-[#1b4332]">
-                    Local Natural Food Business
-                  </p>
-                  <p className="text-xs text-[#52796f] max-w-xs mt-1">
-                    Sydapuram, Nellore District, Andhra Pradesh
-                  </p>
-                  <p className="mt-3 text-[11px] font-medium text-[#7d6c56] bg-white px-3 py-1 rounded-full border border-[#ded5c5]">
-                    Facility Photography Ready
-                  </p>
-                </div>
+                {/* Real Photograph Showcase with Graceful Placeholder Fallback */}
+                <ShowcaseImage
+                  src={SITE_IMAGES.aboutBusinessFacility}
+                  alt="Nela Kranthi Naturals Processing Facility in Sydapuram, Nellore District"
+                  title="Local Natural Food Business"
+                  subtitle="Sydapuram, Nellore District, Andhra Pradesh"
+                  badgeText="Facility Photography Ready"
+                  icon="leaf"
+                  bgClass="bg-[#f4ede3]"
+                  borderClass="border-[#ded5c5]"
+                  badgeBgClass="bg-white"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
+                />
 
                 {/* Bottom Trust Row */}
                 <div className="mt-5 pt-4 border-t border-[#f0eae0] flex items-center justify-between text-xs text-[#52796f]">
