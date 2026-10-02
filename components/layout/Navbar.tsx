@@ -56,7 +56,7 @@ export function Navbar() {
           <div className="flex items-center gap-2">
             <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <p className="font-medium tracking-wide">
-              100% Pure, Chemical-Free Natural Foods • Sourced from Sydapuram, Nellore
+              Naturally Processed, Solar-Dehydrated Foods • Sourced from Sydapuram, Nellore
             </p>
           </div>
           <div className="flex items-center gap-4 text-emerald-100">

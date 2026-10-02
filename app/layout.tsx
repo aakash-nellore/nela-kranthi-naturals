@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,9 +15,41 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nela Kranthi Naturals | 100% Pure & Chemical-Free Natural Foods",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://nelakranthinaturals.com"
+  ),
+  title: {
+    default: "Nela Kranthi Naturals | Naturally Processed Foods & Powders",
+    template: "%s | Nela Kranthi Naturals",
+  },
   description:
-    "Official website of Nela Kranthi Naturals, Sydapuram, Nellore District, Andhra Pradesh. Pure, farm-fresh, solar-dehydrated, and chemical-free natural products.",
+    "Naturally processed fruits, vegetables, leafy greens and food powders, prepared with care in Sydapuram, Nellore District, Andhra Pradesh.",
+  keywords: [
+    "Nela Kranthi Naturals",
+    "natural foods",
+    "dehydrated foods",
+    "food powders",
+    "solar dehydration",
+    "Sydapuram",
+    "Nellore",
+    "Andhra Pradesh",
+  ],
+  authors: [{ name: "Nela Kranthi Naturals" }],
+  creator: "Nela Kranthi Naturals",
+  publisher: "Nela Kranthi Naturals",
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: "Nela Kranthi Naturals | Naturally Processed Foods & Powders",
+    description:
+      "Naturally processed fruits, vegetables, leafy greens and food powders, prepared with care in Sydapuram, Nellore District, Andhra Pradesh.",
+    url: "https://nelakranthinaturals.com",
+    siteName: "Nela Kranthi Naturals",
+    locale: "en_IN",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -32,8 +65,8 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-[#fcfaf6] text-[#212529]">
         <Navbar />
         <div className="flex-1 flex flex-col">{children}</div>
+        <Footer />
       </body>
     </html>
   );
 }
-
