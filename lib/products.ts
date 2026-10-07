@@ -71,7 +71,7 @@ export function resolveProductImage(imageUrl?: string | null): string {
 
   // 4. Bare filename uploaded to the 'product-images' bucket (e.g. "banana-powder.jpg")
   if (!trimmed.includes("/") && supabaseUrl && /\.(jpe?g|png|webp|avif|gif|svg)$/i.test(trimmed)) {
-    return `${supabaseUrl}/storage/v1/object/public/product-images/${trimmed}`;
+    return `${supabaseUrl}/storage/v1/object/public/product-images/${encodeURIComponent(trimmed)}`;
   }
 
   // 5. Local public path (e.g. /images/products/banana-powder.jpg)

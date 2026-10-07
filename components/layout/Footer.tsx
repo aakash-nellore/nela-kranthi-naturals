@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { BrandLogo } from "@/components/layout/BrandLogo";
 
 interface FooterLink {
   label: string;
@@ -35,30 +36,7 @@ export function Footer() {
               className="flex items-center gap-3 group focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4 rounded-md"
               aria-label="Nela Kranthi Naturals Home"
             >
-              <div className="w-10 h-10 rounded-full bg-[#2d6a4f] text-[#fcfaf6] flex items-center justify-center shadow-sm">
-                <svg
-                  className="w-5 h-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
-                  <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
-                </svg>
-              </div>
-
-              <div className="flex flex-col">
-                <span className="font-serif text-xl font-bold tracking-tight text-white leading-tight">
-                  Nela Kranthi
-                </span>
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-emerald-300/80">
-                  Naturals • Sydapuram
-                </span>
-              </div>
+              <BrandLogo variant="footer" />
             </Link>
 
             {/* Description */}

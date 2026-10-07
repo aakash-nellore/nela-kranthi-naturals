@@ -21,10 +21,26 @@ const SUPABASE_URL = (
  */
 export function buildPublicStorageUrl(filename: string): string {
   if (!SUPABASE_URL || !filename.trim()) return "";
-  return `${SUPABASE_URL}/storage/v1/object/public/public-images/${encodeURIComponent(filename)}`;
+  let resolvedFilename = filename.trim();
+  // Resolve exact uploaded logo filename to bucket object if extension was omitted
+  if (resolvedFilename === "Nela kranthi Naturals logo") {
+    resolvedFilename = "Nela kranthi Naturals logo.png";
+  }
+  return `${SUPABASE_URL}/storage/v1/object/public/public-images/${encodeURIComponent(resolvedFilename)}`;
 }
 
+export const BRAND_LOGO_FILENAME = "Nela kranthi Naturals logo";
+
 export const SITE_IMAGES = {
+  /**
+   * Official Brand Identity Logo
+   * Sections: components/layout/Navbar.tsx & components/layout/Footer.tsx
+   * File in bucket `public-images`: `Nela kranthi Naturals logo` (`Nela kranthi Naturals logo.png`)
+   */
+  brandLogo:
+    process.env.NEXT_PUBLIC_IMAGE_BRAND_LOGO ||
+    buildPublicStorageUrl("Nela kranthi Naturals logo"),
+
   /**
    * Homepage Hero — "Natural Harvest Showcase"
    * Section: components/home/HeroSection.tsx

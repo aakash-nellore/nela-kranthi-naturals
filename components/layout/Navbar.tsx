@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { BrandLogo } from "@/components/layout/BrandLogo";
 
 interface NavItem {
   label: string;
@@ -92,30 +93,7 @@ export function Navbar() {
               className="flex items-center gap-3 group focus-visible:outline-2 focus-visible:outline-[#2d6a4f] focus-visible:outline-offset-4 rounded-md"
               aria-label="Nela Kranthi Naturals Home"
             >
-              <div className="w-11 h-11 rounded-full bg-[#2d6a4f] flex items-center justify-center text-[#fcfaf6] shadow-sm transition-transform group-hover:scale-105">
-                <svg
-                  className="w-6 h-6"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
-                  <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
-                </svg>
-              </div>
-
-              <div className="flex flex-col">
-                <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#1b4332] leading-tight">
-                  Nela Kranthi
-                </span>
-                <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-[#52796f]">
-                  Naturals • Sydapuram
-                </span>
-              </div>
+              <BrandLogo variant="navbar" priority />
             </Link>
 
             {/* Desktop Navigation Links */}

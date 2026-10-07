@@ -1,9 +1,11 @@
 import React from "react";
 import Link from "next/link";
-import { products } from "@/data/products";
+import { getAllProducts } from "@/lib/products";
 import ProductCard from "@/components/products/ProductCard";
 
-export default function FeaturedProducts() {
+export default async function FeaturedProducts() {
+  const allProducts = await getAllProducts();
+
   // Select the 4 featured products requested
   const featuredSlugs = [
     "banana-powder",
@@ -13,8 +15,11 @@ export default function FeaturedProducts() {
   ];
 
   const featuredProducts = featuredSlugs
-    .map((slug) => products.find((p) => p.slug === slug))
-    .filter((p): p is (typeof products)[0] => Boolean(p));
+    .map((slug) => allProducts.find((p) => p.slug === slug))
+    .filter((p): p is (typeof allProducts)[0] => Boolean(p));
+
+  const displayProducts =
+    featuredProducts.length > 0 ? featuredProducts : allProducts.slice(0, 4);
 
   return (
     <section
@@ -45,7 +50,7 @@ export default function FeaturedProducts() {
 
         {/* Responsive Product Cards Grid (1 col mobile, 2 col tablet, 4 col desktop) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {featuredProducts.map((product) => (
+          {displayProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
