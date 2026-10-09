@@ -1,0 +1,124 @@
+name: Website Quality & Automated Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: "Target URL to run live smoke tests against (leave empty to use repository variable WEBSITE_URL or run local build tests)"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  # --------------------------------------------------------------------------
+  # 1. Local Build & Test Job
+  # Runs on every push/PR to master: validates build and executes full test suite
+  # --------------------------------------------------------------------------
+  build-and-test:
+    name: Build & Automated Tests
+    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || inputs.target_url == ''
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (LTS 20)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify TypeScript types
+        run: npm run typecheck
+
+      - name: Lint codebase
+        run: npm run lint
+
+      - name: Build Next.js production bundle
+        run: npm run build
+
+      - name: Cache Playwright browser binaries
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright Chromium with OS dependencies
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright OS system dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Run Playwright automated test suite
+        run: npm run test
+        env:
+          CI: true
+
+      - name: Upload Playwright test report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-local
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Upload Playwright traces & test results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-local
+          path: test-results/
+          retention-days: 14
+
+  # --------------------------------------------------------------------------
+  # 2. Deployed Live Website Smoke Test
+  # Manually triggered to test a live Vercel deployment URL
+  # --------------------------------------------------------------------------
+  live-site-smoke:
+    name: Live Site Smoke Test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && (inputs.target_url != '' || vars.WEBSITE_URL != '')
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (LTS 20)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium with OS dependencies
+        run: npx playwright install --with-deps chromium
+
+      - name: Run live smoke & regression tests against deployed URL
+        run: npx playwright test tests/smoke.spec.ts tests/contact.spec.ts tests/seo.spec.ts tests/responsive.spec.ts
+        env:
+          CI: true
+          WEBSITE_URL: ${{ inputs.target_url || vars.WEBSITE_URL }}
+
+      - name: Upload live test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-live
+          path: playwright-report/
+          retention-days: 14
