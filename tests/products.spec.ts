@@ -4,9 +4,7 @@ test.describe("Products Catalogue & Detail Pages", () => {
   test("product catalogue renders products and category filter works", async ({
     page,
   }) => {
-    const response = await page.goto("/products", {
-      waitUntil: "domcontentloaded",
-    });
+    const response = await page.goto("/products");
     expect(response).not.toBeNull();
     expect(response!.status()).toBe(200);
 
@@ -26,11 +24,29 @@ test.describe("Products Catalogue & Detail Pages", () => {
 
     // Click "Fruit Powders" filter and verify results update
     const fruitButton = filterNav.getByRole("button", { name: "Fruit Powders" });
-    if (await fruitButton.isVisible()) {
-      await fruitButton.click();
-      // Should show filtered count text
-      await expect(page.getByText(/in Fruit Powders/i)).toBeVisible();
-    }
+    await expect(fruitButton).toBeVisible();
+
+    // Click Fruit Powders and verify aria-pressed="true" (handles hydration timing gracefully)
+    await expect
+      .poll(async () => {
+        if ((await fruitButton.getAttribute("aria-pressed")) !== "true") {
+          await fruitButton.click();
+        }
+        return await fruitButton.getAttribute("aria-pressed");
+      })
+      .toBe("true");
+
+    // Verify the result summary containing "Showing" and "Fruit Powders" is visible
+    const resultSummary = page
+      .locator("p")
+      .filter({ hasText: "Showing" })
+      .filter({ hasText: "Fruit Powders" });
+    await expect(resultSummary).toBeVisible();
+
+    // Verify at least one product article remains visible
+    const visibleCards = page.locator("article");
+    await expect(visibleCards.first()).toBeVisible();
+    expect(await visibleCards.count()).toBeGreaterThan(0);
   });
 
   test("all discovered product detail routes load with valid content and images", async ({
