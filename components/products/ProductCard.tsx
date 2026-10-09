@@ -27,12 +27,19 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <article className="flex flex-col bg-white rounded-2xl border border-[#e8dfd1] shadow-2xs hover:shadow-md transition-all duration-200 overflow-hidden group">
       {/* Product Image with Real Photo Support & Fallback Placeholder */}
-      <ProductImage
-        src={product.image}
-        alt={`${product.name} - Solar Dehydrated Powder`}
-        productName={product.name}
-        variant="card"
-      />
+      <Link
+        href={`/products/${product.slug}`}
+        className="block overflow-hidden focus-visible:outline-2 focus-visible:outline-[#2d6a4f]"
+        tabIndex={-1}
+        aria-hidden="true"
+      >
+        <ProductImage
+          src={product.image}
+          alt={`${product.name} - Solar Dehydrated Powder`}
+          productName={product.name}
+          variant="card"
+        />
+      </Link>
 
       {/* Product Content Details */}
       <div className="flex flex-col flex-1 p-5 sm:p-6 justify-between">
@@ -61,7 +68,12 @@ export default function ProductCard({ product }: ProductCardProps) {
 
           {/* Product Name */}
           <h2 className="font-serif text-lg sm:text-xl font-bold text-[#1b4332] group-hover:text-[#2d6a4f] transition-colors leading-snug">
-            {product.name}
+            <Link
+              href={`/products/${product.slug}`}
+              className="hover:underline focus-visible:outline-2 focus-visible:outline-[#2d6a4f] rounded-xs"
+            >
+              {product.name}
+            </Link>
           </h2>
 
           {/* Short Description */}
@@ -82,9 +94,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
 
           <Link
-            href={`/contact?inquiry=${encodeURIComponent(product.name)}`}
+            href={`/products/${product.slug}`}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#2d6a4f] text-[#fcfaf6] text-xs font-semibold hover:bg-[#1b4332] transition-colors shadow-2xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d6a4f]"
-            aria-label={`View or inquire about ${product.name}`}
+            aria-label={`View details for ${product.name}`}
           >
             <span>View Product</span>
             <svg

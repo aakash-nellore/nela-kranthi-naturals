@@ -99,6 +99,18 @@ export function mapSupabaseRowToProduct(row: SupabaseProductRow): Product {
 
   const rawImage = row.image_url || localMatch?.image || "";
 
+  // Normalize packaging unit:
+  // If row.unit is empty, null, or mistakenly set to "Powder" (the product form instead of pack size),
+  // fallback to the proper package weight (e.g. "100g / 250g / 500g").
+  const rawUnit = row.unit?.trim();
+  const isInvalidUnit =
+    !rawUnit ||
+    rawUnit.toLowerCase() === "powder" ||
+    rawUnit.toLowerCase() === "powders";
+  const resolvedUnit = isInvalidUnit
+    ? localMatch?.unit || "100g / 250g / 500g"
+    : rawUnit;
+
   return {
     id: row.id,
     name: row.name,
@@ -111,7 +123,7 @@ export function mapSupabaseRowToProduct(row: SupabaseProductRow): Product {
         : row.description),
     description: row.description,
     image: resolveProductImage(rawImage),
-    unit: row.unit || localMatch?.unit || "100g / 250g / 500g",
+    unit: resolvedUnit,
     available: row.is_active,
   };
 }
@@ -175,27 +187,36 @@ export async function getAllAdminProducts(): Promise<Product[]> {
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   if (!slug) return null;
 
+  let normalizedSlug = slug.trim().toLowerCase();
+  try {
+    normalizedSlug = decodeURIComponent(slug).trim().toLowerCase();
+  } catch {
+    // Keep trimmed slug if decode fails
+  }
+
   if (supabase) {
     try {
       const { data, error } = await supabase
         .from("products")
         .select("*")
-        .eq("slug", slug)
+        .eq("slug", normalizedSlug)
         .eq("is_active", true)
         .maybeSingle();
 
       if (error) {
-        console.error(`Supabase error fetching product "${slug}":`, error.message);
+        console.error(`Supabase error fetching product "${normalizedSlug}":`, error.message);
       } else if (data) {
         return mapSupabaseRowToProduct(data as SupabaseProductRow);
       }
     } catch (err) {
-      console.error(`Unexpected error fetching product "${slug}" from Supabase:`, err);
+      console.error(`Unexpected error fetching product "${normalizedSlug}" from Supabase:`, err);
     }
   }
 
   // Graceful fallback to local products
-  const localMatch = fallbackProducts.find((p) => p.slug === slug && p.available);
+  const localMatch = fallbackProducts.find(
+    (p) => p.slug.toLowerCase() === normalizedSlug && p.available
+  );
   return localMatch || null;
 }
 
