@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SITE_CONTACT } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Bulk & Wholesale Enquiries",
@@ -362,7 +363,7 @@ export default function BulkOrdersPage() {
               {/* Direct Quick Actions */}
               <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                 <a
-                  href="https://wa.me/917207717966"
+                  href={SITE_CONTACT.whatsappLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#25D366] text-[#0a2e1c] font-bold text-sm sm:text-base hover:bg-[#20bd5a] transition-all shadow-sm hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366]"
@@ -378,7 +379,7 @@ export default function BulkOrdersPage() {
                 </a>
 
                 <a
-                  href="tel:+917207717966"
+                  href={SITE_CONTACT.telLink}
                   className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white border border-[#cfe1d7] text-[#1b4332] font-semibold text-sm sm:text-base hover:bg-[#e9f1ed] transition-all shadow-2xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d6a4f]"
                 >
                   <svg
@@ -388,9 +389,21 @@ export default function BulkOrdersPage() {
                   >
                     <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z" />
                   </svg>
-                  <span>Call +91 72077 17966</span>
+                  <span>Call {SITE_CONTACT.phoneDisplay}</span>
                 </a>
               </div>
+
+              {/* Email direct note */}
+              <p className="mt-4 text-xs sm:text-sm text-[#4a5750]">
+                Or email your requirements directly to{" "}
+                <a
+                  href={SITE_CONTACT.mailto}
+                  className="text-[#2d6a4f] underline hover:text-[#1b4332] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-[#2d6a4f] rounded-xs"
+                  aria-label={`Email ${SITE_CONTACT.email} for wholesale inquiries`}
+                >
+                  {SITE_CONTACT.email}
+                </a>
+              </p>
             </div>
 
             {/* Right Column: Local Placeholder Visual (Bulk / Packaged Natural Foods) */}
@@ -761,7 +774,7 @@ export default function BulkOrdersPage() {
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             {/* Primary WhatsApp CTA */}
             <a
-              href="https://wa.me/917207717966"
+              href={SITE_CONTACT.whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-[#25D366] text-[#0a2e1c] font-bold text-sm sm:text-base hover:bg-[#20bd5a] transition-all shadow-md focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
@@ -778,7 +791,7 @@ export default function BulkOrdersPage() {
 
             {/* Secondary Phone CTA */}
             <a
-              href="tel:+917207717966"
+              href={SITE_CONTACT.telLink}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-transparent border border-emerald-300/40 text-white font-semibold text-sm sm:text-base hover:bg-[#2d6a4f] transition-all shadow-xs focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
             >
               <svg
@@ -788,7 +801,7 @@ export default function BulkOrdersPage() {
               >
                 <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z" />
               </svg>
-              <span>Call Us</span>
+              <span>Call {SITE_CONTACT.phoneDisplay}</span>
             </a>
 
             {/* Third Contact CTA */}
@@ -798,6 +811,19 @@ export default function BulkOrdersPage() {
             >
               <span>Contact Us &rarr;</span>
             </Link>
+          </div>
+
+          <div className="mt-6 text-center">
+            <p className="text-xs sm:text-sm text-emerald-100/90">
+              Prefer writing to us?{" "}
+              <a
+                href={SITE_CONTACT.mailto}
+                className="text-white underline hover:text-emerald-300 font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-xs"
+                aria-label={`Email ${SITE_CONTACT.email}`}
+              >
+                {SITE_CONTACT.email}
+              </a>
+            </p>
           </div>
         </div>
       </section>

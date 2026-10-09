@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BrandLogo } from "@/components/layout/BrandLogo";
+import { SITE_CONTACT } from "@/lib/constants";
 
 interface NavItem {
   label: string;
@@ -62,9 +63,29 @@ export function Navbar() {
           </div>
           <div className="flex items-center gap-4 text-emerald-100">
             <a
-              href="tel:+917207717966"
+              href={SITE_CONTACT.mailto}
+              className="hover:text-white transition-colors hidden lg:flex items-center gap-1.5 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-sm"
+              aria-label={`Email Nela Kranthi Naturals at ${SITE_CONTACT.email}`}
+            >
+              <svg
+                className="w-3.5 h-3.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <rect width="20" height="16" x="2" y="4" rx="2" />
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+              </svg>
+              <span>{SITE_CONTACT.email}</span>
+            </a>
+            <a
+              href={SITE_CONTACT.telLink}
               className="hover:text-white transition-colors flex items-center gap-1.5 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-sm"
-              aria-label="Call Nela Kranthi Naturals at +91 72077 17966"
+              aria-label={`Call Nela Kranthi Naturals at ${SITE_CONTACT.phoneDisplay}`}
             >
               <svg
                 className="w-3.5 h-3.5 fill-current"
@@ -73,7 +94,7 @@ export function Navbar() {
               >
                 <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z" />
               </svg>
-              <span>+91 72077 17966</span>
+              <span>{SITE_CONTACT.phoneDisplay}</span>
             </a>
           </div>
         </div>
@@ -210,7 +231,7 @@ export function Navbar() {
 
             <div className="mt-5 pt-4 border-t border-[#e8dfd1] flex flex-col gap-2">
               <a
-                href="tel:+917207717966"
+                href={SITE_CONTACT.telLink}
                 className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-[#2d6a4f] text-[#2d6a4f] font-semibold text-sm hover:bg-[#e9f1ed] transition-colors"
               >
                 <svg
@@ -220,7 +241,28 @@ export function Navbar() {
                 >
                   <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z" />
                 </svg>
-                Call: +91 72077 17966
+                Call: {SITE_CONTACT.phoneDisplay}
+              </a>
+
+              <a
+                href={SITE_CONTACT.mailto}
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-[#2d6a4f]/30 text-[#2d6a4f] font-semibold text-xs sm:text-sm hover:bg-[#e9f1ed] transition-colors break-all"
+                aria-label={`Email ${SITE_CONTACT.email}`}
+              >
+                <svg
+                  className="w-4 h-4 shrink-0"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect width="20" height="16" x="2" y="4" rx="2" />
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                </svg>
+                {SITE_CONTACT.email}
               </a>
 
               <Link

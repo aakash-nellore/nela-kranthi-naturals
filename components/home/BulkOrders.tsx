@@ -1,4 +1,5 @@
 import React from "react";
+import { SITE_CONTACT } from "@/lib/constants";
 
 interface BenefitItem {
   id: string;
@@ -187,11 +188,11 @@ export default function BulkOrders() {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
               {/* Primary WhatsApp CTA */}
               <a
-                href="https://wa.me/917207717966"
+                href={SITE_CONTACT.whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-full bg-[#25D366] text-[#0a2e1c] font-bold text-sm sm:text-base hover:bg-[#20bd5a] transition-all shadow-md hover:shadow-lg focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
-                aria-label="Send WhatsApp message for bulk enquiry at +91 72077 17966"
+                aria-label={`Send WhatsApp message for bulk enquiry at ${SITE_CONTACT.phoneDisplay}`}
               >
                 {/* WhatsApp SVG Icon */}
                 <svg
@@ -206,9 +207,9 @@ export default function BulkOrders() {
 
               {/* Secondary Phone CTA */}
               <a
-                href="tel:+917207717966"
+                href={SITE_CONTACT.telLink}
                 className="flex-1 inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-full bg-transparent border-2 border-emerald-400/50 text-emerald-100 hover:text-white hover:bg-emerald-800/60 transition-colors font-semibold text-sm sm:text-base focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
-                aria-label="Call +91 72077 17966"
+                aria-label={`Call ${SITE_CONTACT.phoneDisplay}`}
               >
                 <svg
                   className="w-4 h-4 fill-current"
@@ -217,9 +218,21 @@ export default function BulkOrders() {
                 >
                   <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z" />
                 </svg>
-                <span>Call +91 72077 17966</span>
+                <span>Call {SITE_CONTACT.phoneDisplay}</span>
               </a>
             </div>
+
+            {/* Email Alternative */}
+            <p className="mt-4 text-xs sm:text-sm text-emerald-200/90 text-center sm:text-left">
+              Prefer email? Send your bulk requirements to{" "}
+              <a
+                href={SITE_CONTACT.mailto}
+                className="text-white underline hover:text-emerald-300 font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-xs"
+                aria-label={`Email ${SITE_CONTACT.email} for bulk orders`}
+              >
+                {SITE_CONTACT.email}
+              </a>
+            </p>
           </div>
         </div>
       </div>

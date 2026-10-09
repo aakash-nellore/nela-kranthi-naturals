@@ -1,9 +1,10 @@
 import { test, expect } from "@playwright/test";
 
 const BUSINESS_PHONE_DIGITS = "7207717966";
+const BUSINESS_EMAIL = "nelakranthinaturals@gmail.com";
 
 test.describe("Contact Channels & Business Numbers", () => {
-  test("contact page displays verified telephone and WhatsApp channels with correct number", async ({
+  test("contact page displays verified telephone, WhatsApp, and official email channels", async ({
     page,
   }) => {
     const response = await page.goto("/contact", {
@@ -40,9 +41,29 @@ test.describe("Contact Channels & Business Numbers", () => {
         `WhatsApp link href must target business phone number ${BUSINESS_PHONE_DIGITS}`
       ).toContain(BUSINESS_PHONE_DIGITS);
     }
+
+    // 3. Official Email channel check
+    const emailLinks = page.locator('a[href^="mailto:"]');
+    const emailCount = await emailLinks.count();
+    expect(
+      emailCount,
+      "Expected at least one mailto link on contact page"
+    ).toBeGreaterThan(0);
+
+    for (let i = 0; i < emailCount; i++) {
+      const href = await emailLinks.nth(i).getAttribute("href");
+      expect(
+        href,
+        `Email link href must target official business email ${BUSINESS_EMAIL}`
+      ).toBe(`mailto:${BUSINESS_EMAIL}`);
+      expect(
+        await emailLinks.nth(i).innerText(),
+        `Email link visible text must include ${BUSINESS_EMAIL}`
+      ).toContain(BUSINESS_EMAIL);
+    }
   });
 
-  test("header announcement bar and footer link to correct business phone number", async ({
+  test("header announcement bar and footer link to correct business phone and email", async ({
     page,
   }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
@@ -64,6 +85,26 @@ test.describe("Contact Channels & Business Numbers", () => {
     await expect(footerWhatsapp).toBeVisible();
     const footerWhatsappHref = await footerWhatsapp.getAttribute("href");
     expect(footerWhatsappHref).toContain(BUSINESS_PHONE_DIGITS);
+
+    // Footer Email link
+    const footerEmail = page.locator('footer a[href^="mailto:"]');
+    await expect(footerEmail).toBeVisible();
+    const footerEmailHref = await footerEmail.getAttribute("href");
+    expect(footerEmailHref).toBe(`mailto:${BUSINESS_EMAIL}`);
+    expect(await footerEmail.innerText()).toContain(BUSINESS_EMAIL);
+  });
+
+  test("bulk orders page provides official business email", async ({
+    page,
+  }) => {
+    await page.goto("/bulk-orders", { waitUntil: "domcontentloaded" });
+
+    const bulkEmail = page.locator('main a[href^="mailto:"]');
+    await expect(bulkEmail.first()).toBeVisible();
+    expect(await bulkEmail.first().getAttribute("href")).toBe(
+      `mailto:${BUSINESS_EMAIL}`
+    );
+    expect(await bulkEmail.first().innerText()).toContain(BUSINESS_EMAIL);
   });
 
   test("contact form renders required fields without submitting network payload", async ({
@@ -88,3 +129,4 @@ test.describe("Contact Channels & Business Numbers", () => {
     await expect(phoneInput).toHaveAttribute("required", "");
   });
 });
+

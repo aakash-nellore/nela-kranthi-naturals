@@ -1,5 +1,6 @@
 import React from "react";
 import ContactForm from "@/components/contact/ContactForm";
+import { SITE_CONTACT } from "@/lib/constants";
 
 export default function ContactSection() {
   return (
@@ -64,9 +65,9 @@ export default function ContactSection() {
 
               {/* Phone Channel */}
               <a
-                href="tel:+917207717966"
+                href={SITE_CONTACT.telLink}
                 className="flex items-center justify-between p-4 rounded-2xl bg-white border border-[#e8dfd1] shadow-2xs hover:border-[#2d6a4f]/60 hover:bg-[#faf7f0] transition-colors group"
-                aria-label="Call +91 72077 17966"
+                aria-label={`Call ${SITE_CONTACT.phoneDisplay}`}
               >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-xl bg-[#2d6a4f]/10 text-[#2d6a4f] flex items-center justify-center shrink-0">
@@ -88,7 +89,7 @@ export default function ContactSection() {
                       Phone Call
                     </p>
                     <p className="text-sm font-semibold text-[#1b4332] mt-0.5 group-hover:text-[#2d6a4f] transition-colors">
-                      +91 72077 17966
+                      {SITE_CONTACT.phoneDisplay}
                     </p>
                   </div>
                 </div>
@@ -97,11 +98,11 @@ export default function ContactSection() {
 
               {/* WhatsApp Channel */}
               <a
-                href="https://wa.me/917207717966"
+                href={SITE_CONTACT.whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-between p-4 rounded-2xl bg-white border border-[#e8dfd1] shadow-2xs hover:border-emerald-500/60 hover:bg-[#eef8f2] transition-colors group"
-                aria-label="Chat on WhatsApp at +91 72077 17966"
+                aria-label={`Chat on WhatsApp at ${SITE_CONTACT.phoneDisplay}`}
               >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-xl bg-[#25D366]/15 text-[#1b8a43] flex items-center justify-center shrink-0">
@@ -118,11 +119,45 @@ export default function ContactSection() {
                       WhatsApp Chat
                     </p>
                     <p className="text-sm font-semibold text-[#1b4332] mt-0.5 group-hover:text-[#1b8a43] transition-colors">
-                      +91 72077 17966
+                      {SITE_CONTACT.phoneDisplay}
                     </p>
                   </div>
                 </div>
                 <span className="text-xs font-semibold text-[#1b8a43]">Message →</span>
+              </a>
+
+              {/* Email Channel */}
+              <a
+                href={SITE_CONTACT.mailto}
+                className="flex items-center justify-between p-4 rounded-2xl bg-white border border-[#e8dfd1] shadow-2xs hover:border-[#2d6a4f]/60 hover:bg-[#faf7f0] transition-colors group"
+                aria-label={`Email ${SITE_CONTACT.email}`}
+              >
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-[#2d6a4f]/10 text-[#2d6a4f] flex items-center justify-center shrink-0">
+                    <svg
+                      className="w-5 h-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.75"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <rect width="20" height="16" x="2" y="4" rx="2" />
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                    </svg>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold uppercase tracking-wider text-[#7d6c56]">
+                      Official Email
+                    </p>
+                    <p className="text-sm font-semibold text-[#1b4332] mt-0.5 group-hover:text-[#2d6a4f] transition-colors truncate sm:text-clip">
+                      {SITE_CONTACT.email}
+                    </p>
+                  </div>
+                </div>
+                <span className="text-xs font-semibold text-[#2d6a4f] shrink-0 ml-2">Email →</span>
               </a>
             </div>
           </div>
