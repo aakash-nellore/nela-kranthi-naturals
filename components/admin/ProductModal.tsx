@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { Product, ProductCategory } from "@/types";
 
 interface ProductModalProps {
@@ -29,9 +30,12 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
   const [category, setCategory] = useState<ProductCategory>(
     product?.category ?? "Fruit Powders"
   );
+  const [shortDescription, setShortDescription] = useState(
+    product?.shortDescription ?? ""
+  );
+  const [description, setDescription] = useState(product?.description ?? "");
   const [unit, setUnit] = useState(product?.unit ?? "100g / 250g / 500g");
   const [imageUrl, setImageUrl] = useState(product?.image ?? "");
-  const [description, setDescription] = useState(product?.description ?? "");
   const [isActive, setIsActive] = useState(product?.available ?? true);
 
   // Security notification state
@@ -56,6 +60,25 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
     }
   };
 
+  // Client-safe preview URL resolver
+  const getPreviewUrl = (raw?: string | null): string => {
+    if (!raw || typeof raw !== "string" || !raw.trim()) return "";
+    const trimmed = raw.trim();
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, "");
+    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+    if (trimmed.startsWith("/") && !trimmed.startsWith("/storage/")) return trimmed;
+    if (trimmed.startsWith("/storage/v1/object/public/") && supabaseUrl) return `${supabaseUrl}${trimmed}`;
+    if (trimmed.replace(/^\//, "").startsWith("product-images/") && supabaseUrl) {
+      return `${supabaseUrl}/storage/v1/object/public/${trimmed.replace(/^\//, "")}`;
+    }
+    if (!trimmed.includes("/") && supabaseUrl && /\.(jpe?g|png|webp|avif|gif|svg)$/i.test(trimmed)) {
+      return `${supabaseUrl}/storage/v1/object/public/product-images/${encodeURIComponent(trimmed)}`;
+    }
+    return "";
+  };
+
+  const resolvedPreviewUrl = getPreviewUrl(imageUrl);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -63,7 +86,7 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
     setFeedback({
       type: "warning",
       message:
-        "Authorization Required: Direct product mutations (INSERT / UPDATE) are locked. Supabase Row Level Security restricts public/anonymous writes. To commit persistent changes, authenticated admin credentials must be configured.",
+        "Authorization Required: Direct product mutations (INSERT / UPDATE) are write-locked in Foundation Mode. Supabase Row Level Security restricts public/anonymous writes. To commit persistent changes, authenticated admin credentials must be configured (Priority 4).",
     });
   };
 
@@ -102,7 +125,7 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
       </div>
 
       {/* Modal Body / Form */}
-      <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-5">
+      <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-5 max-h-[80vh] overflow-y-auto">
         {/* Security Banner Notice */}
         <div className="p-4 rounded-2xl bg-amber-50/90 border border-amber-200 text-amber-950 text-xs sm:text-sm">
           <div className="flex items-start gap-2.5">
@@ -124,7 +147,7 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
                 Admin Foundation Security Notice:
               </strong>{" "}
               Anonymous write access is prohibited by Supabase Row Level Security (RLS).
-              Full database write capability requires an authenticated admin session before production deployment.
+              Full database write capability requires an authenticated admin session (Priority 4).
             </div>
           </div>
         </div>
@@ -227,25 +250,74 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
           </div>
         </div>
 
-        {/* Image URL */}
+        {/* Image URL & Live Preview */}
         <div>
           <label
             htmlFor="product-image"
             className="block text-xs font-semibold uppercase tracking-wider text-[#3f4e46] mb-1.5"
           >
-            Image URL / Path
+            Image Reference / Storage URL
+          </label>
+          <div className="flex flex-col sm:flex-row items-start gap-3">
+            <div className="flex-1 w-full">
+              <input
+                id="product-image"
+                type="text"
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                placeholder="e.g. Banana-Flour-550x550.webp or /images/products/banana-powder.jpg"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#ded5c5] bg-white text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
+              />
+              <p className="text-[11px] text-[#7d6c56] mt-1">
+                Accepts filenames in Supabase `product-images` bucket, full HTTPS URLs, or public paths.
+              </p>
+            </div>
+
+            {/* Thumbnail Preview Box */}
+            <div className="w-16 h-16 rounded-xl border border-[#ded5c5] bg-[#f8f5ee] overflow-hidden shrink-0 flex items-center justify-center relative">
+              {resolvedPreviewUrl ? (
+                <Image
+                  src={resolvedPreviewUrl}
+                  alt={name || "Preview"}
+                  fill
+                  className="object-cover"
+                  unoptimized={resolvedPreviewUrl.startsWith("http")}
+                />
+              ) : (
+                <svg
+                  className="w-6 h-6 text-[#ded5c5]"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                  />
+                </svg>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Short Description */}
+        <div>
+          <label
+            htmlFor="product-short-description"
+            className="block text-xs font-semibold uppercase tracking-wider text-[#3f4e46] mb-1.5"
+          >
+            Short Summary (Catalogue Card Preview)
           </label>
           <input
-            id="product-image"
+            id="product-short-description"
             type="text"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            placeholder="/images/products/banana-powder.jpg"
+            value={shortDescription}
+            onChange={(e) => setShortDescription(e.target.value)}
+            placeholder="Brief 1-sentence product summary displayed on catalogue cards."
             className="w-full px-3.5 py-2.5 rounded-xl border border-[#ded5c5] bg-white text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
           />
-          <p className="text-[11px] text-[#7d6c56] mt-1">
-            Supports public directory paths (e.g. /images/products/slug.jpg) or external HTTPS image links.
-          </p>
         </div>
 
         {/* Description */}
