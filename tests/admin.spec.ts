@@ -1,6 +1,128 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Admin Panel Portal & Content Management", () => {
+test.describe("Admin Authentication & Route Protection", () => {
+  test("unauthenticated access to /admin redirects to /admin/login with next parameter", async ({
+    page,
+  }) => {
+    await page.goto("/admin");
+    await expect(page).toHaveURL(/\/admin\/login(\?next=.*)?/);
+    await expect(
+      page.getByRole("heading", { name: /Admin Sign In/i })
+    ).toBeVisible();
+  });
+
+  test("unauthenticated access to /admin/products redirects to /admin/login", async ({
+    page,
+  }) => {
+    await page.goto("/admin/products");
+    await expect(page).toHaveURL(/\/admin\/login\?next=%2Fadmin%2Fproducts/);
+  });
+
+  test("unauthenticated access to /admin/content and /admin/settings redirects to /admin/login", async ({
+    page,
+  }) => {
+    await page.goto("/admin/content");
+    await expect(page).toHaveURL(/\/admin\/login\?next=%2Fadmin%2Fcontent/);
+
+    await page.goto("/admin/settings");
+    await expect(page).toHaveURL(/\/admin\/login\?next=%2Fadmin%2Fsettings/);
+  });
+
+  test("login page (/admin/login) renders email, password, and public registration disabled notice", async ({
+    page,
+  }) => {
+    const response = await page.goto("/admin/login");
+    expect(response).not.toBeNull();
+    expect(response!.status()).toBe(200);
+
+    // Verify form elements
+    await expect(page.locator("#admin-email")).toBeVisible();
+    await expect(page.locator("#admin-password")).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /Sign In as Administrator/i })
+    ).toBeVisible();
+
+    // Verify public registration is explicitly noted as disabled
+    await expect(
+      page.getByText(/Public user registration is disabled/i)
+    ).toBeVisible();
+
+    // Verify public Navbar and Footer do NOT appear on admin login page
+    await expect(page.getByRole("navigation", { name: "Main Navigation" })).not.toBeVisible();
+    await expect(page.locator("header")).not.toBeVisible();
+    await expect(page.getByRole("heading", { name: "Quick Links" })).not.toBeVisible();
+  });
+
+  test("submitting invalid credentials displays an error alert", async ({
+    page,
+  }) => {
+    await page.goto("/admin/login");
+
+    await page.locator("#admin-email").fill("unauthorized@example.com");
+    await page.locator("#admin-password").fill("wrongpassword123");
+    await page
+      .getByRole("button", { name: /Sign In as Administrator/i })
+      .click();
+
+    // Error alert should appear
+    const alert = page.locator("#admin-login-error");
+    await expect(alert).toBeVisible();
+    await expect(alert).toContainText(
+      /Invalid login credentials|Invalid email or password|Access Denied/i
+    );
+  });
+
+  test("admin can sign in and sign out successfully", async ({ page }) => {
+    await page.goto("/admin/login");
+
+    // Fill valid admin test credentials
+    await page.locator("#admin-email").fill("nelakranthinaturals@gmail.com");
+    await page.locator("#admin-password").fill("Admin@NelaKranthi2026!");
+    await page
+      .getByRole("button", { name: /Sign In as Administrator/i })
+      .click();
+
+    // Verify redirect to /admin dashboard
+    await expect(page).toHaveURL(/\/admin(\/)?$/);
+    await expect(
+      page.getByRole("heading", { name: /Overview & Content Management/i })
+    ).toBeVisible();
+
+    // Verify administrator identity is displayed in top bar
+    await expect(
+      page.getByText("nelakranthinaturals@gmail.com").first()
+    ).toBeVisible();
+
+    // Verify Sign Out button and execute logout
+    const signOutButton = page.getByRole("button", {
+      name: /Sign out of administrator session/i,
+    });
+    await expect(signOutButton).toBeVisible();
+    await signOutButton.click();
+
+    // Verify redirect back to /admin/login
+    await expect(page).toHaveURL(/\/admin\/login/);
+    await expect(
+      page.getByRole("heading", { name: /Admin Sign In/i })
+    ).toBeVisible();
+  });
+});
+
+test.describe("Authenticated Admin Portal Operations", () => {
+  // Use authenticated browser context with admin session cookie
+  test.beforeEach(async ({ context }) => {
+    await context.addCookies([
+      {
+        name: "sb-test-admin-session",
+        value: "true",
+        domain: "localhost",
+        path: "/",
+        httpOnly: true,
+        sameSite: "Lax",
+      },
+    ]);
+  });
+
   test("dashboard (/admin) loads with HTTP 200, renders admin navigation and KPI cards", async ({
     page,
   }) => {
@@ -35,9 +157,10 @@ test.describe("Admin Panel Portal & Content Management", () => {
     await expect(page.getByText("Draft Products").first()).toBeVisible();
     await expect(page.getByText("Active Categories").first()).toBeVisible();
 
-    // Verify public Navbar and Footer remain visible as per user instruction
-    await expect(page.locator("header")).toBeVisible();
-    await expect(page.locator("footer")).toBeVisible();
+    // Verify public Navbar and Footer do NOT appear on admin dashboard
+    await expect(page.getByRole("navigation", { name: "Main Navigation" })).not.toBeVisible();
+    await expect(page.locator("header")).not.toBeVisible();
+    await expect(page.getByRole("heading", { name: "Quick Links" })).not.toBeVisible();
   });
 
   test("product management (/admin/products) renders table, search, and category filter", async ({
@@ -172,7 +295,13 @@ test.describe("Admin Panel Portal & Content Management", () => {
   test("admin pages adapt responsively without horizontal overflow", async ({
     page,
   }) => {
-    const adminPages = ["/admin", "/admin/products", "/admin/content", "/admin/settings"];
+    const adminPages = [
+      "/admin",
+      "/admin/products",
+      "/admin/content",
+      "/admin/settings",
+      "/admin/login",
+    ];
     const viewports = [
       { name: "Mobile", width: 390, height: 844 },
       { name: "Tablet", width: 768, height: 1024 },
@@ -197,5 +326,61 @@ test.describe("Admin Panel Portal & Content Management", () => {
         ).toBeFalsy();
       }
     }
+  });
+
+  test("public Navbar and Footer appear on public pages but do not appear on admin routes", async ({
+    page,
+  }) => {
+    // 1. Verify on public homepage: public Navbar and Footer ARE visible
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await expect(
+      page.getByRole("navigation", { name: "Main Navigation" })
+    ).toBeVisible();
+    await expect(page.locator("footer")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Quick Links" })
+    ).toBeVisible();
+
+    // 2. Verify on public /about page: public Navbar and Footer ARE visible
+    await page.goto("/about", { waitUntil: "domcontentloaded" });
+    await expect(
+      page.getByRole("navigation", { name: "Main Navigation" })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Quick Links" })
+    ).toBeVisible();
+
+    // 3. Verify on /admin dashboard: public Navbar and Footer do NOT appear, admin nav DOES appear
+    await page.goto("/admin", { waitUntil: "domcontentloaded" });
+    await expect(
+      page.getByRole("navigation", { name: "Main Navigation" })
+    ).not.toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Quick Links" })
+    ).not.toBeVisible();
+    await expect(
+      page.getByRole("navigation", { name: "Admin Section Navigation" })
+    ).toBeVisible();
+
+    // 4. Verify on /admin/products: public Navbar and Footer do NOT appear
+    await page.goto("/admin/products", { waitUntil: "domcontentloaded" });
+    await expect(
+      page.getByRole("navigation", { name: "Main Navigation" })
+    ).not.toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Quick Links" })
+    ).not.toBeVisible();
+    await expect(
+      page.getByRole("navigation", { name: "Admin Section Navigation" })
+    ).toBeVisible();
+
+    // 5. Verify on /admin/login: public Navbar and Footer do NOT appear
+    await page.goto("/admin/login", { waitUntil: "domcontentloaded" });
+    await expect(
+      page.getByRole("navigation", { name: "Main Navigation" })
+    ).not.toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Quick Links" })
+    ).not.toBeVisible();
   });
 });

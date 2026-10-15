@@ -58,21 +58,21 @@ export default function AdminContentPage() {
         <div className="pb-6 border-b border-[#eee7db]">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#e9f1ed] border border-[#cfe1d7] text-[#1b4332] text-xs font-semibold mb-2">
             <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
-            <span>Content Architecture</span>
+            <span>Informational Overview (Read-Only)</span>
           </div>
           <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1b4332] tracking-tight">
             Website Content Overview
           </h1>
           <p className="mt-1 text-sm sm:text-base text-[#52796f] max-w-3xl">
-            Audit and map out editable public website content sections. In upcoming phases, content updates will be editable directly from this portal.
+            Audit and inspect verified public website narratives and asset mappings. This page is strictly informational and read-only; content is not directly editable in this phase.
           </p>
         </div>
 
-        {/* Foundation Notice */}
-        <div className="p-5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-950 text-xs sm:text-sm">
+        {/* Read-Only Informational Notice */}
+        <div className="p-5 rounded-2xl bg-[#f8f5ee] border border-[#ded5c5] text-[#3f4e46] text-xs sm:text-sm">
           <div className="flex items-start gap-3">
             <svg
-              className="w-5 h-5 text-amber-800 shrink-0 mt-0.5"
+              className="w-5 h-5 text-[#2d6a4f] shrink-0 mt-0.5"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth="2"
@@ -85,10 +85,10 @@ export default function AdminContentPage() {
               />
             </svg>
             <div>
-              <strong className="font-semibold text-amber-900">
-                Content Management Architecture:
+              <strong className="font-semibold text-[#1b4332]">
+                Read-Only Informational Overview:
               </strong>{" "}
-              The public website currently serves verified, statically optimized content across core landing pages. In <strong>Priority 5</strong>, database-backed site content tables will allow authorized administrators to revise headlines, copy, and brand assets dynamically.
+              The content cards below reflect the verified narratives and media assets currently published on the public website (Homepage, About Us, Solar Dehydration, and Contact). In this phase, these sections are strictly informational for reference and auditing. Content is served from verified source code and is not directly editable from this portal. No CMS or production database changes are introduced.
             </div>
           </div>
         </div>
@@ -136,9 +136,11 @@ export default function AdminContentPage() {
               </div>
 
               <div className="mt-5 pt-4 border-t border-[#eee7db] flex items-center justify-between">
-                <span className="text-xs text-[#7d6c56]">
-                  Status: <strong className="text-emerald-700">Verified Live</strong>
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-[#7d6c56]">
+                    Mode: <strong className="text-[#2d6a4f]">Informational (Read-Only)</strong>
+                  </span>
+                </div>
                 <Link
                   href={section.route}
                   target="_blank"

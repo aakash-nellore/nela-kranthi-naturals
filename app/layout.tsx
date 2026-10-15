@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import { SITE_CONTACT } from "@/lib/constants";
 import "./globals.css";
 
@@ -85,9 +83,7 @@ export default function RootLayout({
             __html: JSON.stringify(organizationJsonLd),
           }}
         />
-        <Navbar />
-        <div className="flex-1 flex flex-col">{children}</div>
-        <Footer />
+        {children}
       </body>
     </html>
   );
