@@ -91,7 +91,7 @@ jobs:
   live-site-smoke:
     name: Live Site Smoke Test
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' && (inputs.target_url != '' || vars.WEBSITE_URL != '')
+    if: github.event_name == 'workflow_dispatch' && (inputs.target_url != '' || vars['WEBSITE_URL'] != '')
 
     steps:
       - name: Check out repository
@@ -113,7 +113,7 @@ jobs:
         run: npx playwright test tests/smoke.spec.ts tests/contact.spec.ts tests/seo.spec.ts tests/responsive.spec.ts
         env:
           CI: true
-          WEBSITE_URL: ${{ inputs.target_url || vars.WEBSITE_URL }}
+          WEBSITE_URL: ${{ inputs.target_url || vars['WEBSITE_URL'] }}
 
       - name: Upload live test report
         if: always()

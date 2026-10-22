@@ -109,7 +109,7 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
         <button
           type="button"
           onClick={onClose}
-          className="p-2 text-[#7d6c56] hover:text-[#1b4332] hover:bg-[#f3ede3] rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-[#2d6a4f]"
+          className="min-w-[44px] min-h-[44px] flex items-center justify-center p-2 text-[#7d6c56] hover:text-[#1b4332] hover:bg-[#f3ede3] rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-[#2d6a4f]"
           aria-label="Close modal"
         >
           <svg
@@ -182,7 +182,7 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
               value={name}
               onChange={handleNameChange}
               placeholder="e.g. Banana Powder"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-[#ded5c5] bg-white text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-[#ded5c5] bg-white text-base sm:text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
             />
           </div>
 
@@ -201,7 +201,7 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
               placeholder="e.g. banana-powder"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-[#ded5c5] bg-[#fdfbf7] text-sm text-[#1b4332] font-mono placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-[#ded5c5] bg-[#fdfbf7] text-base sm:text-sm text-[#1b4332] font-mono placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
             />
           </div>
         </div>
@@ -220,7 +220,7 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
               id="product-category"
               value={category}
               onChange={(e) => setCategory(e.target.value as ProductCategory)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-[#ded5c5] bg-white text-sm text-[#1b4332] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-[#ded5c5] bg-white text-base sm:text-sm text-[#1b4332] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
             >
               {CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
@@ -245,7 +245,7 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
               value={unit}
               onChange={(e) => setUnit(e.target.value)}
               placeholder="e.g. 100g / 250g / 500g"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-[#ded5c5] bg-white text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-[#ded5c5] bg-white text-base sm:text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
             />
           </div>
         </div>
@@ -266,7 +266,7 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
                 placeholder="e.g. Banana-Flour-550x550.webp or /images/products/banana-powder.jpg"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#ded5c5] bg-white text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#ded5c5] bg-white text-base sm:text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
               />
               <p className="text-[11px] text-[#7d6c56] mt-1">
                 Accepts filenames in Supabase `product-images` bucket, full HTTPS URLs, or public paths.
@@ -316,7 +316,7 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
             value={shortDescription}
             onChange={(e) => setShortDescription(e.target.value)}
             placeholder="Brief 1-sentence product summary displayed on catalogue cards."
-            className="w-full px-3.5 py-2.5 rounded-xl border border-[#ded5c5] bg-white text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
+            className="w-full px-3.5 py-2.5 rounded-xl border border-[#ded5c5] bg-white text-base sm:text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
           />
         </div>
 
@@ -335,7 +335,7 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Detailed description of product sourcing, solar dehydration process, and culinary/usage details."
-            className="w-full px-3.5 py-2.5 rounded-xl border border-[#ded5c5] bg-white text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
+            className="w-full px-3.5 py-2.5 rounded-xl border border-[#ded5c5] bg-white text-base sm:text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
           />
         </div>
 
@@ -361,14 +361,14 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
           <button
             type="button"
             onClick={onClose}
-            className="w-full sm:w-auto px-5 py-2.5 rounded-full border border-[#ded5c5] text-xs sm:text-sm font-semibold text-[#4a5750] hover:bg-[#f3ede3] transition-colors"
+            className="w-full sm:w-auto px-5 py-3 sm:py-2.5 min-h-[44px] sm:min-h-0 rounded-full border border-[#ded5c5] text-xs sm:text-sm font-semibold text-[#4a5750] hover:bg-[#f3ede3] transition-colors inline-flex items-center justify-center"
           >
             Cancel
           </button>
 
           <button
             type="submit"
-            className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-[#2d6a4f] text-[#fcfaf6] text-xs sm:text-sm font-semibold hover:bg-[#1b4332] transition-colors shadow-xs focus-visible:outline-2 focus-visible:outline-[#2d6a4f]"
+            className="w-full sm:w-auto px-6 py-3 sm:py-2.5 min-h-[44px] sm:min-h-0 rounded-full bg-[#2d6a4f] text-[#fcfaf6] text-xs sm:text-sm font-semibold hover:bg-[#1b4332] transition-colors shadow-xs focus-visible:outline-2 focus-visible:outline-[#2d6a4f] inline-flex items-center justify-center"
           >
             {isEditing ? "Save Changes" : "Create Product"}
           </button>

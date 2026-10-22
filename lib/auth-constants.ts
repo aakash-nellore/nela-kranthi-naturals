@@ -45,10 +45,12 @@ export function isUserAdmin(user: UserLike | null | undefined): boolean {
     return true;
   }
 
-  // 3. Local non-production testing environment bypass for verified testing email
+  // 3. Local non-production testing environment bypass for verified testing emails
   if (
     process.env.NODE_ENV !== "production" &&
-    normalizedEmail === "nelakranthinaturals@gmail.com"
+    (normalizedEmail === "nelakranthinaturals@gmail.com" ||
+      (process.env.TEST_ADMIN_EMAIL &&
+        normalizedEmail === process.env.TEST_ADMIN_EMAIL.toLowerCase().trim()))
   ) {
     return true;
   }

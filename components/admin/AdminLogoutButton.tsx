@@ -17,7 +17,7 @@ export default function AdminLogoutButton() {
       type="button"
       onClick={handleLogout}
       disabled={isPending}
-      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1b4332] hover:bg-[#2d6a4f] text-emerald-200 hover:text-white border border-[#2d6a4f] text-[11px] font-semibold transition-colors disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-white"
+      className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 sm:py-1 min-h-[44px] sm:min-h-0 rounded-full bg-[#1b4332] hover:bg-[#2d6a4f] text-emerald-200 hover:text-white border border-[#2d6a4f] text-xs sm:text-[11px] font-semibold transition-colors disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-white"
       title="Sign out of administration session"
       aria-label="Sign out of administrator session"
     >

@@ -78,10 +78,10 @@ export default function AboutPreview() {
     <section
       id="about-preview"
       aria-labelledby="about-preview-heading"
-      className="py-16 sm:py-20 lg:py-24 bg-[#f7f2ea] border-b border-[#e8dfd1]"
+      className="py-12 sm:py-20 lg:py-24 bg-[#f7f2ea] border-b border-[#e8dfd1]"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
           {/* Left Column: Narrative Content & Highlights */}
           <div className="lg:col-span-7 flex flex-col items-start text-left">
             {/* Badge */}
@@ -99,7 +99,7 @@ export default function AboutPreview() {
             </h2>
 
             {/* Narrative Paragraphs */}
-            <div className="mt-6 space-y-4 text-base sm:text-lg text-[#3f4e46] leading-relaxed">
+            <div className="mt-5 sm:mt-6 space-y-4 text-base sm:text-lg text-[#3f4e46] leading-relaxed">
               <p>
                 Nela Kranthi Naturals is a natural-food processing business based
                 in Sydapuram, Nellore, Andhra Pradesh. We focus on carefully
@@ -115,7 +115,7 @@ export default function AboutPreview() {
             </div>
 
             {/* 3 Core Highlights */}
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+            <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4 w-full">
               {highlights.map((item) => (
                 <div
                   key={item.id}
@@ -137,7 +137,7 @@ export default function AboutPreview() {
             </div>
 
             {/* CTA Link */}
-            <div className="mt-10">
+            <div className="mt-8 sm:mt-10">
               <Link
                 href="/about"
                 className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#2d6a4f] text-[#fcfaf6] font-semibold text-sm sm:text-base hover:bg-[#1b4332] transition-all shadow-sm hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d6a4f]"
@@ -164,9 +164,9 @@ export default function AboutPreview() {
           {/* Right Column: Visual Showcase Placeholder */}
           <div className="lg:col-span-5 w-full">
             <div className="relative mx-auto max-w-md lg:max-w-none">
-              <div className="rounded-3xl bg-white border border-[#e4dbcd] p-6 sm:p-8 shadow-xl overflow-hidden">
+              <div className="rounded-3xl bg-white border border-[#e4dbcd] p-5 sm:p-8 shadow-xl overflow-hidden">
                 {/* Header within Card */}
-                <div className="flex items-center justify-between border-b border-[#f0eae0] pb-4 mb-6">
+                <div className="flex items-center justify-between border-b border-[#f0eae0] pb-3.5 sm:pb-4 mb-5 sm:mb-6">
                   <div className="flex items-center gap-2.5">
                     <div className="w-9 h-9 rounded-full bg-[#2d6a4f] text-[#fcfaf6] flex items-center justify-center font-serif font-bold text-sm">
                       NK

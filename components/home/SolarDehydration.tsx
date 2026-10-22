@@ -122,11 +122,11 @@ export default function SolarDehydration() {
     <section
       id="solar-dehydration"
       aria-labelledby="solar-dehydration-heading"
-      className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-[#f7f2ea] to-[#fcfaf6] border-b border-[#e8dfd1]"
+      className="py-12 sm:py-20 lg:py-24 bg-gradient-to-b from-[#f7f2ea] to-[#fcfaf6] border-b border-[#e8dfd1]"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#e9f1ed] border border-[#cfe1d7] text-[#1b4332] text-xs font-semibold mb-4 shadow-2xs">
             <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
             <span>Hygienic Preparation Process</span>
@@ -148,7 +148,7 @@ export default function SolarDehydration() {
 
         {/* Real Solar Dehydration Process Photograph (rendered when configured) */}
         {SITE_IMAGES.solarDehydrationProcess ? (
-          <div className="max-w-4xl mx-auto mb-12 sm:mb-16">
+          <div className="max-w-4xl mx-auto mb-8 sm:mb-16">
             <ShowcaseImage
               src={SITE_IMAGES.solarDehydrationProcess}
               alt="Solar Dehydration Processing Unit and Hygiene Standards at Nela Kranthi Naturals, Sydapuram"
@@ -166,16 +166,16 @@ export default function SolarDehydration() {
         ) : null}
 
         {/* 5-Step Process Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 lg:gap-4 items-stretch">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 lg:gap-4 items-stretch">
           {steps.map((item) => (
             <div
               key={item.step}
-              className="flex flex-col justify-between bg-white rounded-2xl p-6 border border-[#e8dfd1] shadow-2xs hover:shadow-md hover:border-[#2d6a4f]/40 transition-all duration-200"
+              className="flex flex-col justify-between bg-white rounded-2xl p-4.5 sm:p-6 border border-[#e8dfd1] shadow-2xs hover:shadow-md hover:border-[#2d6a4f]/40 transition-all duration-200"
             >
               <div>
                 {/* Step Top Bar: Icon & Step Number */}
-                <div className="flex items-center justify-between mb-5">
-                  <div className="w-12 h-12 rounded-xl bg-[#2d6a4f]/10 flex items-center justify-center">
+                <div className="flex items-center justify-between mb-3.5 sm:mb-5">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#2d6a4f]/10 flex items-center justify-center">
                     {item.icon}
                   </div>
                   <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-full bg-[#e9f1ed] text-[#2d6a4f] border border-[#cfe1d7]">
@@ -184,18 +184,18 @@ export default function SolarDehydration() {
                 </div>
 
                 {/* Step Title */}
-                <h3 className="font-serif text-lg font-bold text-[#1b4332] leading-snug">
+                <h3 className="font-serif text-base sm:text-lg font-bold text-[#1b4332] leading-snug">
                   {item.title}
                 </h3>
 
                 {/* Step Description */}
-                <p className="mt-2.5 text-xs sm:text-sm text-[#4a5750] leading-relaxed">
+                <p className="mt-2 text-xs sm:text-sm text-[#4a5750] leading-relaxed">
                   {item.description}
                 </p>
               </div>
 
               {/* Bottom Subtle Step Indicator */}
-              <div className="mt-6 pt-3 border-t border-[#f0eae0] flex items-center gap-1.5 text-[11px] font-medium text-[#7d6c56]">
+              <div className="mt-4 sm:mt-6 pt-2.5 sm:pt-3 border-t border-[#f0eae0] flex items-center gap-1.5 text-[11px] font-medium text-[#7d6c56]">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
                 <span>Step {item.step}</span>
               </div>
@@ -204,7 +204,7 @@ export default function SolarDehydration() {
         </div>
 
         {/* Bottom CTA */}
-        <div className="mt-12 sm:mt-16 text-center">
+        <div className="mt-8 sm:mt-16 text-center">
           <Link
             href="/solar-dehydration"
             className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#2d6a4f] text-[#fcfaf6] font-semibold text-sm sm:text-base hover:bg-[#1b4332] transition-all shadow-sm hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d6a4f]"

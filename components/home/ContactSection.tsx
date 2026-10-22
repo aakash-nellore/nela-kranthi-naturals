@@ -7,10 +7,10 @@ export default function ContactSection() {
     <section
       id="contact"
       aria-labelledby="contact-heading"
-      className="py-16 sm:py-20 lg:py-24 bg-[#fcfaf6] border-b border-[#e8dfd1]"
+      className="py-12 sm:py-20 lg:py-24 bg-[#fcfaf6] border-b border-[#e8dfd1]"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start">
           {/* Left Column: Contact Information & Direct Channels */}
           <div className="lg:col-span-5 flex flex-col items-start text-left">
             {/* Badge */}
@@ -28,19 +28,19 @@ export default function ContactSection() {
             </h2>
 
             {/* Supporting Text */}
-            <p className="mt-5 text-base sm:text-lg text-[#3f4e46] leading-relaxed">
+            <p className="mt-4 sm:mt-5 text-base sm:text-lg text-[#3f4e46] leading-relaxed">
               Have a question about our products or want to discuss a bulk
               requirement? Get in touch with Nela Kranthi Naturals and share your
               requirements with us.
             </p>
 
             {/* Contact Details Cards */}
-            <div className="mt-8 space-y-4 w-full">
+            <div className="mt-6 sm:mt-8 space-y-3 sm:space-y-4 w-full">
               {/* Business & Location */}
-              <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-[#e8dfd1] shadow-2xs">
-                <div className="w-10 h-10 rounded-xl bg-[#2d6a4f]/10 text-[#2d6a4f] flex items-center justify-center shrink-0">
+              <div className="flex items-start gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-2xl bg-white border border-[#e8dfd1] shadow-2xs">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#2d6a4f]/10 text-[#2d6a4f] flex items-center justify-center shrink-0">
                   <svg
-                    className="w-5 h-5"
+                    className="w-4.5 h-4.5 sm:w-5 sm:h-5"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -54,10 +54,10 @@ export default function ContactSection() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-[#7d6c56]">
+                  <p className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#7d6c56]">
                     Nela Kranthi Naturals
                   </p>
-                  <p className="text-sm font-semibold text-[#1b4332] mt-0.5">
+                  <p className="text-xs sm:text-sm font-semibold text-[#1b4332] mt-0.5">
                     Sydapuram, Nellore District, Andhra Pradesh, India
                   </p>
                 </div>
@@ -66,13 +66,13 @@ export default function ContactSection() {
               {/* Phone Channel */}
               <a
                 href={SITE_CONTACT.telLink}
-                className="flex items-center justify-between p-4 rounded-2xl bg-white border border-[#e8dfd1] shadow-2xs hover:border-[#2d6a4f]/60 hover:bg-[#faf7f0] transition-colors group"
+                className="flex items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-[#e8dfd1] shadow-2xs hover:border-[#2d6a4f]/60 hover:bg-[#faf7f0] transition-colors group"
                 aria-label={`Call ${SITE_CONTACT.phoneDisplay}`}
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-[#2d6a4f]/10 text-[#2d6a4f] flex items-center justify-center shrink-0">
+                <div className="flex items-center gap-3.5 sm:gap-4">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#2d6a4f]/10 text-[#2d6a4f] flex items-center justify-center shrink-0">
                     <svg
-                      className="w-5 h-5"
+                      className="w-4.5 h-4.5 sm:w-5 sm:h-5"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -85,10 +85,10 @@ export default function ContactSection() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-[#7d6c56]">
+                    <p className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#7d6c56]">
                       Phone Call
                     </p>
-                    <p className="text-sm font-semibold text-[#1b4332] mt-0.5 group-hover:text-[#2d6a4f] transition-colors">
+                    <p className="text-xs sm:text-sm font-semibold text-[#1b4332] mt-0.5 group-hover:text-[#2d6a4f] transition-colors">
                       {SITE_CONTACT.phoneDisplay}
                     </p>
                   </div>
@@ -101,13 +101,13 @@ export default function ContactSection() {
                 href={SITE_CONTACT.whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between p-4 rounded-2xl bg-white border border-[#e8dfd1] shadow-2xs hover:border-emerald-500/60 hover:bg-[#eef8f2] transition-colors group"
+                className="flex items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-[#e8dfd1] shadow-2xs hover:border-emerald-500/60 hover:bg-[#eef8f2] transition-colors group"
                 aria-label={`Chat on WhatsApp at ${SITE_CONTACT.phoneDisplay}`}
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-[#25D366]/15 text-[#1b8a43] flex items-center justify-center shrink-0">
+                <div className="flex items-center gap-3.5 sm:gap-4">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#25D366]/15 text-[#1b8a43] flex items-center justify-center shrink-0">
                     <svg
-                      className="w-5 h-5 fill-current"
+                      className="w-4.5 h-4.5 sm:w-5 sm:h-5 fill-current"
                       viewBox="0 0 24 24"
                       aria-hidden="true"
                     >
@@ -115,10 +115,10 @@ export default function ContactSection() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-[#7d6c56]">
+                    <p className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#7d6c56]">
                       WhatsApp Chat
                     </p>
-                    <p className="text-sm font-semibold text-[#1b4332] mt-0.5 group-hover:text-[#1b8a43] transition-colors">
+                    <p className="text-xs sm:text-sm font-semibold text-[#1b4332] mt-0.5 group-hover:text-[#1b8a43] transition-colors">
                       {SITE_CONTACT.phoneDisplay}
                     </p>
                   </div>
@@ -129,13 +129,13 @@ export default function ContactSection() {
               {/* Email Channel */}
               <a
                 href={SITE_CONTACT.mailto}
-                className="flex items-center justify-between p-4 rounded-2xl bg-white border border-[#e8dfd1] shadow-2xs hover:border-[#2d6a4f]/60 hover:bg-[#faf7f0] transition-colors group"
+                className="flex items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-[#e8dfd1] shadow-2xs hover:border-[#2d6a4f]/60 hover:bg-[#faf7f0] transition-colors group"
                 aria-label={`Email ${SITE_CONTACT.email}`}
               >
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-10 h-10 rounded-xl bg-[#2d6a4f]/10 text-[#2d6a4f] flex items-center justify-center shrink-0">
+                <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#2d6a4f]/10 text-[#2d6a4f] flex items-center justify-center shrink-0">
                     <svg
-                      className="w-5 h-5"
+                      className="w-4.5 h-4.5 sm:w-5 sm:h-5"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -149,10 +149,10 @@ export default function ContactSection() {
                     </svg>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-bold uppercase tracking-wider text-[#7d6c56]">
+                    <p className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#7d6c56]">
                       Official Email
                     </p>
-                    <p className="text-sm font-semibold text-[#1b4332] mt-0.5 group-hover:text-[#2d6a4f] transition-colors truncate sm:text-clip">
+                    <p className="text-xs sm:text-sm font-semibold text-[#1b4332] mt-0.5 group-hover:text-[#2d6a4f] transition-colors truncate sm:text-clip">
                       {SITE_CONTACT.email}
                     </p>
                   </div>

@@ -101,7 +101,7 @@ export default function BulkOrders() {
     <section
       id="bulk-orders"
       aria-labelledby="bulk-orders-heading"
-      className="py-16 sm:py-20 lg:py-24 bg-[#1b4332] text-[#f4efe6] relative overflow-hidden"
+      className="py-12 sm:py-20 lg:py-24 bg-[#1b4332] text-[#f4efe6] relative overflow-hidden"
     >
       {/* Background Decorative Ambient Glow */}
       <div
@@ -114,7 +114,7 @@ export default function BulkOrders() {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
           {/* Left Column: Heading, Supporting Text & Guidance Note */}
           <div className="lg:col-span-5 flex flex-col items-start text-left">
             {/* Badge */}
@@ -132,14 +132,14 @@ export default function BulkOrders() {
             </h2>
 
             {/* Supporting Copy */}
-            <p className="mt-5 text-base sm:text-lg text-emerald-100/90 leading-relaxed">
+            <p className="mt-4 sm:mt-5 text-base sm:text-lg text-emerald-100/90 leading-relaxed">
               We welcome enquiries from retailers, distributors, food businesses,
               hotels, restaurants and other buyers looking for naturally
               processed food products in bulk quantities.
             </p>
 
             {/* Enquiry Guidance Note */}
-            <div className="mt-6 w-full p-4 sm:p-5 rounded-2xl bg-[#245742] border border-emerald-700/60 text-xs sm:text-sm text-emerald-100 flex items-start gap-3 shadow-inner">
+            <div className="mt-5 sm:mt-6 w-full p-4 sm:p-5 rounded-2xl bg-[#245742] border border-emerald-700/60 text-xs sm:text-sm text-emerald-100 flex items-start gap-3 shadow-inner">
               <div className="w-6 h-6 rounded-full bg-emerald-700/60 flex items-center justify-center shrink-0 mt-0.5">
                 <svg
                   className="w-3.5 h-3.5 text-emerald-300"
@@ -161,22 +161,22 @@ export default function BulkOrders() {
           </div>
 
           {/* Right Column: 4 Benefits & Contact Actions */}
-          <div className="lg:col-span-7 w-full flex flex-col gap-6">
+          <div className="lg:col-span-7 w-full flex flex-col gap-5 sm:gap-6">
             {/* 4 Benefits 2x2 Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               {benefits.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-[#245742]/80 rounded-2xl p-5 border border-emerald-700/50 shadow-2xs hover:border-emerald-500/60 transition-colors flex flex-col justify-between"
+                  className="bg-[#245742]/80 rounded-2xl p-4 sm:p-5 border border-emerald-700/50 shadow-2xs hover:border-emerald-500/60 transition-colors flex flex-col justify-between"
                 >
                   <div>
-                    <div className="w-10 h-10 rounded-xl bg-emerald-800/80 flex items-center justify-center mb-3">
+                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-800/80 flex items-center justify-center mb-2.5 sm:mb-3">
                       {item.icon}
                     </div>
-                    <h3 className="font-serif text-lg font-bold text-white leading-snug">
+                    <h3 className="font-serif text-base sm:text-lg font-bold text-white leading-snug">
                       {item.title}
                     </h3>
-                    <p className="mt-1.5 text-xs sm:text-sm text-emerald-100/80 leading-relaxed">
+                    <p className="mt-1 text-xs sm:text-sm text-emerald-100/80 leading-relaxed">
                       {item.description}
                     </p>
                   </div>
@@ -185,13 +185,13 @@ export default function BulkOrders() {
             </div>
 
             {/* Direct Contact CTAs */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1 sm:pt-2">
               {/* Primary WhatsApp CTA */}
               <a
                 href={SITE_CONTACT.whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-full bg-[#25D366] text-[#0a2e1c] font-bold text-sm sm:text-base hover:bg-[#20bd5a] transition-all shadow-md hover:shadow-lg focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+                className="flex-1 inline-flex items-center justify-center gap-2.5 px-6 py-3 sm:py-3.5 min-h-[48px] rounded-full bg-[#25D366] text-[#0a2e1c] font-bold text-sm sm:text-base hover:bg-[#20bd5a] transition-all shadow-md hover:shadow-lg focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
                 aria-label={`Send WhatsApp message for bulk enquiry at ${SITE_CONTACT.phoneDisplay}`}
               >
                 {/* WhatsApp SVG Icon */}
@@ -208,7 +208,7 @@ export default function BulkOrders() {
               {/* Secondary Phone CTA */}
               <a
                 href={SITE_CONTACT.telLink}
-                className="flex-1 inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-full bg-transparent border-2 border-emerald-400/50 text-emerald-100 hover:text-white hover:bg-emerald-800/60 transition-colors font-semibold text-sm sm:text-base focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+                className="flex-1 inline-flex items-center justify-center gap-2.5 px-6 py-2.5 sm:py-3 min-h-[48px] rounded-full bg-transparent border-2 border-emerald-400/50 text-emerald-100 hover:text-white hover:bg-emerald-800/60 transition-colors font-semibold text-sm sm:text-base focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
                 aria-label={`Call ${SITE_CONTACT.phoneDisplay}`}
               >
                 <svg

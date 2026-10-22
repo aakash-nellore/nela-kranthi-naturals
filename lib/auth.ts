@@ -23,7 +23,7 @@ export async function getAdminSession(): Promise<AdminUser | null> {
       if (testToken === "true") {
         return {
           id: "local-admin-test-id",
-          email: "nelakranthinaturals@gmail.com",
+          email: process.env.TEST_ADMIN_EMAIL || "nelakranthinaturals@gmail.com",
           role: "admin",
           lastSignInAt: new Date().toISOString(),
         };

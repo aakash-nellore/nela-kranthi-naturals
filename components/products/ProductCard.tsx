@@ -95,7 +95,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
           <Link
             href={`/products/${product.slug}`}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#2d6a4f] text-[#fcfaf6] text-xs font-semibold hover:bg-[#1b4332] transition-colors shadow-2xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d6a4f]"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-3 sm:py-2 min-h-[44px] sm:min-h-0 rounded-xl bg-[#2d6a4f] text-[#fcfaf6] text-sm sm:text-xs font-semibold hover:bg-[#1b4332] transition-colors shadow-2xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d6a4f]"
             aria-label={`View details for ${product.name}`}
           >
             <span>View Product</span>

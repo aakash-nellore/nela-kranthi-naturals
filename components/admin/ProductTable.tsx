@@ -64,7 +64,7 @@ export default function ProductTable({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search products by name or slug..."
-              className="w-full pl-9 pr-4 py-2 rounded-full border border-[#ded5c5] bg-white text-xs sm:text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
+              className="w-full pl-9 pr-4 py-2 rounded-full border border-[#ded5c5] bg-white text-base sm:text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
             />
             <svg
               className="w-4 h-4 text-[#7d6c56] absolute left-3 top-1/2 -translate-y-1/2"
@@ -87,7 +87,7 @@ export default function ProductTable({
               onChange={(e) =>
                 setSelectedCategory(e.target.value as ProductCategory | "All")
               }
-              className="px-3.5 py-2 rounded-full border border-[#ded5c5] bg-white text-xs sm:text-sm text-[#1b4332] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
+              className="px-3.5 py-2 rounded-full border border-[#ded5c5] bg-white text-base sm:text-sm text-[#1b4332] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
             >
               {CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
@@ -116,7 +116,7 @@ export default function ProductTable({
           <button
             type="button"
             onClick={onAdd}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#2d6a4f] text-[#fcfaf6] text-xs sm:text-sm font-semibold hover:bg-[#1b4332] transition-colors shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d6a4f]"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 sm:py-2.5 min-h-[44px] sm:min-h-0 rounded-full bg-[#2d6a4f] text-[#fcfaf6] text-xs sm:text-sm font-semibold hover:bg-[#1b4332] transition-colors shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d6a4f]"
           >
             <svg
               className="w-4 h-4"
@@ -237,7 +237,7 @@ export default function ProductTable({
                       <button
                         type="button"
                         onClick={() => onEdit(product)}
-                        className="px-3 py-1.5 rounded-lg border border-[#ded5c5] bg-white text-xs font-semibold text-[#1b4332] hover:bg-[#f3ede3] transition-colors focus-visible:outline-2 focus-visible:outline-[#2d6a4f]"
+                        className="px-3.5 py-2.5 sm:py-1.5 min-h-[44px] sm:min-h-0 rounded-lg border border-[#ded5c5] bg-white text-xs font-semibold text-[#1b4332] hover:bg-[#f3ede3] transition-colors focus-visible:outline-2 focus-visible:outline-[#2d6a4f] inline-flex items-center justify-center"
                       >
                         Edit
                       </button>
@@ -246,7 +246,7 @@ export default function ProductTable({
                         href={`/products/${product.slug}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-1.5 rounded-lg text-[#7d6c56] hover:text-[#1b4332] hover:bg-[#f3ede3] transition-colors focus-visible:outline-2 focus-visible:outline-[#2d6a4f]"
+                        className="p-2.5 sm:p-1.5 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 rounded-lg text-[#7d6c56] hover:text-[#1b4332] hover:bg-[#f3ede3] transition-colors focus-visible:outline-2 focus-visible:outline-[#2d6a4f] inline-flex items-center justify-center"
                         title="View public page"
                       >
                         <svg

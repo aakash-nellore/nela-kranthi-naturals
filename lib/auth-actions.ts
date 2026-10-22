@@ -25,22 +25,6 @@ export async function loginAdminAction(
     return { error: "Please provide both email address and password." };
   }
 
-  // Non-production test bypass for local Playwright automated testing
-  if (
-    process.env.NODE_ENV !== "production" &&
-    email.toLowerCase() === "nelakranthinaturals@gmail.com" &&
-    password === "Admin@NelaKranthi2026!"
-  ) {
-    const cookieStore = await cookies();
-    cookieStore.set(TEST_ADMIN_COOKIE, "true", {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 8, // 8 hours
-    });
-    redirect(safeNext);
-  }
 
   const supabase = await createServerSupabaseClient();
   if (!supabase) {

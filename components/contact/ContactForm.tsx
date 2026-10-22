@@ -201,7 +201,7 @@ function ContactFormInner() {
             onChange={handleChange}
             placeholder="e.g. Rajesh Kumar"
             disabled={status === "submitting"}
-            className="w-full px-4 py-3 rounded-xl border border-[#ded5c5] bg-[#fdfcf9] text-sm text-[#1b4332] placeholder-[#a39887] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f] focus:border-transparent transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full px-4 py-3 rounded-xl border border-[#ded5c5] bg-[#fdfcf9] text-base sm:text-sm text-[#1b4332] placeholder-[#a39887] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f] focus:border-transparent transition-all disabled:opacity-60 disabled:cursor-not-allowed"
           />
         </div>
 
@@ -224,7 +224,7 @@ function ContactFormInner() {
               onChange={handleChange}
               placeholder="+91 XXXXX XXXXX"
               disabled={status === "submitting"}
-              className="w-full px-4 py-3 rounded-xl border border-[#ded5c5] bg-[#fdfcf9] text-sm text-[#1b4332] placeholder-[#a39887] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f] focus:border-transparent transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full px-4 py-3 rounded-xl border border-[#ded5c5] bg-[#fdfcf9] text-base sm:text-sm text-[#1b4332] placeholder-[#a39887] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f] focus:border-transparent transition-all disabled:opacity-60 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -232,7 +232,7 @@ function ContactFormInner() {
           <div>
             <label
               htmlFor="emailAddress"
-              className="block text-xs font-bold uppercase tracking-wider text-[#1b4332] mb-1.5"
+              className="block text-xs font-semibold uppercase tracking-wider text-[#1b4332] mb-1.5"
             >
               Email Address
             </label>
@@ -244,7 +244,7 @@ function ContactFormInner() {
               onChange={handleChange}
               placeholder="you@example.com"
               disabled={status === "submitting"}
-              className="w-full px-4 py-3 rounded-xl border border-[#ded5c5] bg-[#fdfcf9] text-sm text-[#1b4332] placeholder-[#a39887] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f] focus:border-transparent transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full px-4 py-3 rounded-xl border border-[#ded5c5] bg-[#fdfcf9] text-base sm:text-sm text-[#1b4332] placeholder-[#a39887] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f] focus:border-transparent transition-all disabled:opacity-60 disabled:cursor-not-allowed"
             />
           </div>
         </div>
@@ -265,7 +265,7 @@ function ContactFormInner() {
             onChange={handleChange}
             placeholder="e.g. Banana Powder, Moringa Powder, Bulk Enquiry..."
             disabled={status === "submitting"}
-            className="w-full px-4 py-3 rounded-xl border border-[#ded5c5] bg-[#fdfcf9] text-sm text-[#1b4332] placeholder-[#a39887] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f] focus:border-transparent transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full px-4 py-3 rounded-xl border border-[#ded5c5] bg-[#fdfcf9] text-base sm:text-sm text-[#1b4332] placeholder-[#a39887] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f] focus:border-transparent transition-all disabled:opacity-60 disabled:cursor-not-allowed"
           />
         </div>
 
@@ -285,7 +285,7 @@ function ContactFormInner() {
             onChange={handleChange}
             placeholder="Share your requirements or questions with us..."
             disabled={status === "submitting"}
-            className="w-full px-4 py-3 rounded-xl border border-[#ded5c5] bg-[#fdfcf9] text-sm text-[#1b4332] placeholder-[#a39887] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f] focus:border-transparent transition-all resize-y disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full px-4 py-3 rounded-xl border border-[#ded5c5] bg-[#fdfcf9] text-base sm:text-sm text-[#1b4332] placeholder-[#a39887] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f] focus:border-transparent transition-all resize-y disabled:opacity-60 disabled:cursor-not-allowed"
           />
         </div>
 

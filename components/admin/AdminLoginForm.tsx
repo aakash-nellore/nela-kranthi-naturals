@@ -61,7 +61,7 @@ export default function AdminLoginForm({
             autoFocus
             defaultValue=""
             placeholder="nelakranthinaturals@gmail.com"
-            className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[#ded5c5] bg-[#fcfaf6] text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
+            className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[#ded5c5] bg-[#fcfaf6] text-base sm:text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
           />
           <svg
             className="w-4 h-4 text-[#7d6c56] absolute left-3 top-1/2 -translate-y-1/2"
@@ -93,7 +93,7 @@ export default function AdminLoginForm({
             required
             autoComplete="current-password"
             placeholder="••••••••••••"
-            className="w-full pl-9 pr-10 py-2.5 rounded-xl border border-[#ded5c5] bg-[#fcfaf6] text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
+            className="w-full pl-9 pr-12 py-2.5 rounded-xl border border-[#ded5c5] bg-[#fcfaf6] text-base sm:text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
           />
           <svg
             className="w-4 h-4 text-[#7d6c56] absolute left-3 top-1/2 -translate-y-1/2"
@@ -114,7 +114,7 @@ export default function AdminLoginForm({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="p-1.5 text-[#7d6c56] hover:text-[#1b4332] absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md transition-colors focus-visible:outline-2 focus-visible:outline-[#2d6a4f]"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center p-2 text-[#7d6c56] hover:text-[#1b4332] absolute right-1 top-1/2 -translate-y-1/2 rounded-md transition-colors focus-visible:outline-2 focus-visible:outline-[#2d6a4f]"
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? (
@@ -136,7 +136,7 @@ export default function AdminLoginForm({
         <button
           type="submit"
           disabled={isPending}
-          className="w-full inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-[#2d6a4f] text-[#fcfaf6] text-sm font-semibold hover:bg-[#1b4332] transition-colors shadow-xs disabled:opacity-60 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-[#2d6a4f]"
+          className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 sm:py-2.5 min-h-[44px] sm:min-h-0 rounded-full bg-[#2d6a4f] text-[#fcfaf6] text-sm font-semibold hover:bg-[#1b4332] transition-colors shadow-xs disabled:opacity-60 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-[#2d6a4f]"
         >
           {isPending ? (
             <>

@@ -153,7 +153,7 @@ export function Footer() {
                   href={SITE_CONTACT.whatsappLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#25D366] text-[#0a2e1c] font-bold text-xs hover:bg-[#20bd5a] transition-all shadow-xs focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3 sm:py-2 min-h-[44px] sm:min-h-0 rounded-full bg-[#25D366] text-[#0a2e1c] font-bold text-sm sm:text-xs hover:bg-[#20bd5a] transition-all shadow-xs focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
                 >
                   <svg
                     className="w-4 h-4 fill-current"

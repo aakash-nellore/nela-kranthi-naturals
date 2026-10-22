@@ -53,15 +53,18 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full shadow-xs">
       {/* Top Announcement & Contact Bar */}
-      <div className="bg-[#1b4332] text-[#f4efe6] px-4 py-2 text-xs md:text-sm">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1">
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <p className="font-medium tracking-wide">
-              Naturally Processed, Solar-Dehydrated Foods • Sourced from Sydapuram, Nellore
+      <div className="bg-[#1b4332] text-[#f4efe6] px-3 sm:px-4 py-1.5 sm:py-2 text-xs md:text-sm">
+        <div className="max-w-7xl mx-auto flex flex-row items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 shrink-0 animate-pulse" />
+            <p className="font-medium tracking-wide truncate">
+              <span className="sm:hidden">Solar-Dehydrated Foods • Sydapuram</span>
+              <span className="hidden sm:inline">
+                Naturally Processed, Solar-Dehydrated Foods • Sourced from Sydapuram, Nellore
+              </span>
             </p>
           </div>
-          <div className="flex items-center gap-4 text-emerald-100">
+          <div className="flex items-center gap-3 sm:gap-4 text-emerald-100 shrink-0">
             <a
               href={SITE_CONTACT.mailto}
               className="hover:text-white transition-colors hidden lg:flex items-center gap-1.5 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-sm"
@@ -106,7 +109,7 @@ export function Navbar() {
         aria-label="Main Navigation"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-16 sm:h-20">
             {/* Logo / Brand Name */}
             <Link
               href="/"
@@ -157,7 +160,7 @@ export function Navbar() {
               <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className="inline-flex items-center justify-center p-2.5 rounded-md text-[#1b4332] hover:bg-[#f3ede3] focus-visible:outline-2 focus-visible:outline-[#2d6a4f] focus-visible:outline-offset-2 transition-colors"
+                className="inline-flex items-center justify-center p-2.5 min-w-[44px] min-h-[44px] rounded-md text-[#1b4332] hover:bg-[#f3ede3] focus-visible:outline-2 focus-visible:outline-[#2d6a4f] focus-visible:outline-offset-2 transition-colors"
                 aria-expanded={isOpen}
                 aria-controls="mobile-menu"
                 aria-label={isOpen ? "Close main menu" : "Open main menu"}
@@ -205,7 +208,7 @@ export function Navbar() {
         {isOpen && (
           <div
             id="mobile-menu"
-            className="md:hidden border-t border-[#e8dfd1] bg-[#fcfaf6] px-4 pt-3 pb-6 shadow-lg animate-in slide-in-from-top-2 duration-200"
+            className="md:hidden border-t border-[#e8dfd1] bg-[#fcfaf6] px-4 pt-3 pb-6 shadow-lg animate-in slide-in-from-top-2 duration-200 max-h-[calc(100dvh-5.5rem)] sm:max-h-[calc(100dvh-6.5rem)] overflow-y-auto overscroll-contain"
           >
             <ul className="flex flex-col space-y-1">
               {navItems.map((item) => {
@@ -215,7 +218,7 @@ export function Navbar() {
                     <Link
                       href={item.href}
                       onClick={closeMenu}
-                      className={`block px-3 py-2.5 rounded-md text-base font-medium transition-colors ${
+                      className={`flex items-center px-3 py-2.5 min-h-[44px] rounded-md text-base font-medium transition-colors ${
                         isActive
                           ? "bg-[#e9f1ed] text-[#1b4332] font-semibold"
                           : "text-[#3f4e46] hover:bg-[#f3ede3] hover:text-[#1b4332]"
@@ -229,10 +232,10 @@ export function Navbar() {
               })}
             </ul>
 
-            <div className="mt-5 pt-4 border-t border-[#e8dfd1] flex flex-col gap-2">
+            <div className="mt-5 pt-4 border-t border-[#e8dfd1] flex flex-col gap-2.5">
               <a
                 href={SITE_CONTACT.telLink}
-                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-[#2d6a4f] text-[#2d6a4f] font-semibold text-sm hover:bg-[#e9f1ed] transition-colors"
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 min-h-[44px] rounded-lg border border-[#2d6a4f] text-[#2d6a4f] font-semibold text-sm hover:bg-[#e9f1ed] transition-colors"
               >
                 <svg
                   className="w-4 h-4 fill-current"
@@ -246,7 +249,7 @@ export function Navbar() {
 
               <a
                 href={SITE_CONTACT.mailto}
-                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-[#2d6a4f]/30 text-[#2d6a4f] font-semibold text-xs sm:text-sm hover:bg-[#e9f1ed] transition-colors break-all"
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 min-h-[44px] rounded-lg border border-[#2d6a4f]/30 text-[#2d6a4f] font-semibold text-xs sm:text-sm hover:bg-[#e9f1ed] transition-colors break-all"
                 aria-label={`Email ${SITE_CONTACT.email}`}
               >
                 <svg
@@ -268,7 +271,7 @@ export function Navbar() {
               <Link
                 href="/contact"
                 onClick={closeMenu}
-                className="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-[#2d6a4f] text-[#fcfaf6] font-semibold text-sm hover:bg-[#1b4332] transition-colors shadow-xs"
+                className="w-full inline-flex items-center justify-center px-4 py-3 min-h-[44px] rounded-lg bg-[#2d6a4f] text-[#fcfaf6] font-semibold text-sm hover:bg-[#1b4332] transition-colors shadow-xs"
               >
                 Contact & Inquiries
               </Link>

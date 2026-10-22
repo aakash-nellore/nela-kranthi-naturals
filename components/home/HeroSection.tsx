@@ -24,8 +24,8 @@ export default function HeroSection() {
           {/* Left Column: Heading, Copy, Location Badge, CTAs */}
           <div className="lg:col-span-7 flex flex-col items-start text-left">
             {/* Location & Trust Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#e9f1ed] border border-[#cfe1d7] text-[#1b4332] text-xs sm:text-sm font-medium mb-6 shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-[#2d6a4f] shrink-0" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-[#e9f1ed] border border-[#cfe1d7] text-[#1b4332] text-[11px] sm:text-sm font-medium mb-5 sm:mb-6 shadow-2xs leading-tight">
+              <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#2d6a4f] shrink-0" />
               <span>Made with care in Sydapuram, Nellore, Andhra Pradesh</span>
             </div>
 
@@ -93,11 +93,11 @@ export default function HeroSection() {
             </div>
 
             {/* Call To Action Buttons */}
-            <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4 w-full sm:w-auto">
+            <div className="mt-6 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
               {/* Primary CTA */}
               <Link
                 href="/products"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-[#2d6a4f] text-[#fcfaf6] font-semibold text-base hover:bg-[#1b4332] transition-all shadow-md hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d6a4f]"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 sm:px-7 sm:py-3.5 min-h-[48px] sm:min-h-0 rounded-full bg-[#2d6a4f] text-[#fcfaf6] font-semibold text-sm sm:text-base hover:bg-[#1b4332] transition-all shadow-md hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d6a4f]"
               >
                 <span>Explore Products</span>
                 <svg
@@ -119,7 +119,7 @@ export default function HeroSection() {
               {/* Secondary CTA */}
               <Link
                 href="/bulk-orders"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-transparent border-2 border-[#2d6a4f] text-[#2d6a4f] font-semibold text-base hover:bg-[#e9f1ed] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d6a4f]"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2 sm:px-7 sm:py-3 min-h-[48px] sm:min-h-0 rounded-full bg-transparent border-2 border-[#2d6a4f] text-[#2d6a4f] font-semibold text-sm sm:text-base hover:bg-[#e9f1ed] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d6a4f]"
               >
                 <span>Bulk / Wholesale Enquiry</span>
               </Link>
