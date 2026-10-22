@@ -3,6 +3,7 @@ import { createServerSupabaseClient } from "@/lib/supabase-server";
 import {
   isUserAdmin,
   TEST_ADMIN_COOKIE,
+  isTestSessionPermitted,
   type AdminUser,
 } from "@/lib/auth-constants";
 
@@ -17,8 +18,8 @@ export async function getAdminSession(): Promise<AdminUser | null> {
   try {
     const cookieStore = await cookies();
 
-    // In non-production testing environment, handle automated test session cookie
-    if (process.env.NODE_ENV !== "production") {
+    // In automated testing environment, handle test session cookie
+    if (isTestSessionPermitted()) {
       const testToken = cookieStore.get(TEST_ADMIN_COOKIE)?.value;
       if (testToken === "true") {
         return {

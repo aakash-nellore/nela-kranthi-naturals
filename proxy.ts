@@ -4,6 +4,7 @@ import {
   isUserAdmin,
   getSafeAdminRedirect,
   TEST_ADMIN_COOKIE,
+  isTestSessionPermitted,
 } from "@/lib/auth-constants";
 
 export async function proxy(request: NextRequest) {
@@ -15,9 +16,9 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  // Non-production test session check for automated Playwright tests
+  // Non-production / test runner session check for automated Playwright tests
   const isTestSession =
-    process.env.NODE_ENV !== "production" &&
+    isTestSessionPermitted() &&
     request.cookies.get(TEST_ADMIN_COOKIE)?.value === "true";
 
   let isAuthenticatedAdmin = isTestSession;

@@ -16,6 +16,38 @@ export interface UserLike {
 }
 
 /**
+ * Determines whether automated test sessions via TEST_ADMIN_COOKIE are permitted.
+ *
+ * FAIL-CLOSED SECURITY INVARIANTS:
+ * 1. STRICTLY FORBIDDEN on any Vercel deployment (Production, Preview, or Dev).
+ *    If process.env.VERCEL is set or process.env.VERCEL_ENV is set, IMMEDIATELY returns false.
+ * 2. STRICTLY FORBIDDEN on any public deployment outside Vercel.
+ *    If NODE_ENV === "production", test sessions are ONLY permitted if ALL of the following hold:
+ *      a) process.env.CI === "true" (running within an isolated CI container)
+ *      b) process.env.ALLOW_TEST_ADMIN_SESSION === "true" (explicit opt-in from test config)
+ *      c) NEITHER process.env.VERCEL nor process.env.VERCEL_ENV is set.
+ *    Any public production server will fail condition (a), failing closed.
+ * 3. In local development (NODE_ENV === "development"), allowed for local testing unless Vercel is detected.
+ */
+export function isTestSessionPermitted(): boolean {
+  // 1. Immediately fail closed on any Vercel deployment (Production, Preview, Dev)
+  if (process.env.VERCEL || process.env.VERCEL_ENV) {
+    return false;
+  }
+
+  // 2. In production mode (e.g. `next start` during CI test runs), strictly require isolated CI container flags
+  if (process.env.NODE_ENV === "production") {
+    return (
+      process.env.CI === "true" &&
+      process.env.ALLOW_TEST_ADMIN_SESSION === "true"
+    );
+  }
+
+  // 3. In local development (`next dev`), permitted
+  return process.env.NODE_ENV === "development";
+}
+
+/**
  * Validates whether a user is an authorized administrator.
  *
  * SECURITY RULES:
@@ -45,9 +77,9 @@ export function isUserAdmin(user: UserLike | null | undefined): boolean {
     return true;
   }
 
-  // 3. Local non-production testing environment bypass for verified testing emails
+  // 3. Automated testing environment bypass for verified testing emails
   if (
-    process.env.NODE_ENV !== "production" &&
+    isTestSessionPermitted() &&
     (normalizedEmail === "nelakranthinaturals@gmail.com" ||
       (process.env.TEST_ADMIN_EMAIL &&
         normalizedEmail === process.env.TEST_ADMIN_EMAIL.toLowerCase().trim()))

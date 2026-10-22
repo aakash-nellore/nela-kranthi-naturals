@@ -1,4 +1,25 @@
+import fs from "fs";
+import path from "path";
 import { defineConfig, devices } from "@playwright/test";
+
+// Load local environment variables for tests if .env.local exists on disk
+const envLocalPath = path.resolve(process.cwd(), ".env.local");
+if (fs.existsSync(envLocalPath)) {
+  const envContent = fs.readFileSync(envLocalPath, "utf-8");
+  envContent.split("\n").forEach((line) => {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith("#")) {
+      const eqIdx = trimmed.indexOf("=");
+      if (eqIdx !== -1) {
+        const key = trimmed.slice(0, eqIdx).trim();
+        const value = trimmed.slice(eqIdx + 1).trim();
+        if (key && !process.env[key]) {
+          process.env[key] = value;
+        }
+      }
+    }
+  });
+}
 
 /**
  * Resolves the target base URL for tests.
@@ -62,9 +83,14 @@ export default defineConfig({
   webServer: isRemoteTarget
     ? undefined
     : {
-        command: process.env.CI ? "npm run start" : "npm run dev",
-        url: "http://localhost:3000",
+        command: process.env.CI
+          ? "npx next start -H 127.0.0.1 -p 3000"
+          : "npx next dev -H 127.0.0.1 -p 3000",
+        url: "http://127.0.0.1:3000",
         reuseExistingServer: !process.env.CI,
         timeout: 120 * 1000,
+        env: {
+          ALLOW_TEST_ADMIN_SESSION: "true",
+        },
       },
 });

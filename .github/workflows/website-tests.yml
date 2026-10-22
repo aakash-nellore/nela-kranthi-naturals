@@ -67,6 +67,7 @@ jobs:
         run: npm run test
         env:
           CI: true
+          ALLOW_TEST_ADMIN_SESSION: "true"
 
       - name: Upload Playwright test report artifact
         if: always()

@@ -7,6 +7,7 @@ import {
   isUserAdmin,
   getSafeAdminRedirect,
   TEST_ADMIN_COOKIE,
+  isTestSessionPermitted,
 } from "@/lib/auth-constants";
 
 /**
@@ -82,8 +83,8 @@ export async function logoutAdminAction(): Promise<void> {
   try {
     const cookieStore = await cookies();
 
-    // Clear non-production test cookie if present
-    if (process.env.NODE_ENV !== "production") {
+    // Clear test cookie if present
+    if (isTestSessionPermitted()) {
       cookieStore.delete(TEST_ADMIN_COOKIE);
     }
 
