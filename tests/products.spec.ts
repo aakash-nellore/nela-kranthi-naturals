@@ -81,6 +81,21 @@ test.describe("Products Catalogue & Detail Pages", () => {
       "Expected to find product detail links on /products"
     ).toBeGreaterThan(0);
 
+    // Verify all 8 core published products are discovered
+    const expectedPublishedSlugs = [
+      "/products/banana-powder",
+      "/products/curry-leaves-powder",
+      "/products/lemon-powder",
+      "/products/mango-powder",
+      "/products/moringa-powder",
+      "/products/okra-powder",
+      "/products/papaya-powder",
+      "/products/pineapple-powder",
+    ];
+    for (const expectedPath of expectedPublishedSlugs) {
+      expect(links, `Expected catalogue to include ${expectedPath}`).toContain(expectedPath);
+    }
+
     // 2. Test each discovered product detail route
     for (const productPath of links) {
       const detailResponse = await page.goto(productPath, {
@@ -137,6 +152,193 @@ test.describe("Products Catalogue & Detail Pages", () => {
 
       const enquiryButton = page.locator('a[href*="/contact?inquiry="]');
       await expect(enquiryButton.first()).toBeVisible();
+    }
+  });
+
+  test("all six categories are rendered in filter bar and empty/upcoming states work as expected", async ({
+    page,
+  }) => {
+    await page.goto("/products");
+
+    const filterNav = page.getByRole("navigation", {
+      name: "Filter products by category",
+    });
+    await expect(filterNav).toBeVisible();
+
+    const expectedCategories = [
+      "All",
+      "Leaf Powders",
+      "Flower & Petal Products",
+      "Fruit Powders",
+      "Vegetable Powders",
+      "Roots, Spices & Specialty Botanicals",
+      "Dehydrated Foods",
+    ];
+
+    for (const cat of expectedCategories) {
+      await expect(
+        filterNav.getByRole("button", { name: cat })
+      ).toBeVisible();
+    }
+
+    // Verify Dehydrated Foods upcoming empty state is preserved
+    const dehydratedButton = filterNav.getByRole("button", {
+      name: "Dehydrated Foods",
+    });
+    await dehydratedButton.click();
+    await expect(
+      page.getByRole("heading", { name: "Upcoming Specialty Harvest" })
+    ).toBeVisible();
+    await expect(
+      page.getByText(/sun-cured prawns, dry mutton, and dehydrated fish/i)
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: /Inquire for Pre-orders/i })
+    ).toHaveAttribute(
+      "href",
+      "/contact?inquiry=Upcoming%20Dehydrated%20Foods"
+    );
+
+    // Verify Flower & Petal Products upcoming empty state
+    const flowerButton = filterNav.getByRole("button", {
+      name: "Flower & Petal Products",
+    });
+    await flowerButton.click();
+    await expect(
+      page.getByRole("heading", { name: "Upcoming Flower & Petal Products" })
+    ).toBeVisible();
+    await expect(
+      page.getByText(/solar-dehydrated flower & petal products/i)
+    ).toBeVisible();
+
+    // Verify Roots, Spices & Specialty Botanicals upcoming empty state
+    const rootsButton = filterNav.getByRole("button", {
+      name: "Roots, Spices & Specialty Botanicals",
+    });
+    await rootsButton.click();
+    await expect(
+      page.getByRole("heading", {
+        name: "Upcoming Roots, Spices & Specialty Botanicals",
+      })
+    ).toBeVisible();
+
+    // Return to All Products
+    const allButton = filterNav.getByRole("button", { name: "All" });
+    await allButton.click();
+    const productCards = page.locator("article");
+    expect(await productCards.count()).toBeGreaterThan(0);
+  });
+
+  test("all 23 prepared draft products are strictly excluded from the public storefront and return 404", async ({
+    page,
+  }) => {
+    const draftSlugs = [
+      "guava-leaf-powder",
+      "papaya-leaf-powder",
+      "jamun-leaf-powder",
+      "neem-leaf-powder",
+      "gongura-leaf-powder",
+      "mint-leaf-powder",
+      "desi-gulabi-rose-petals-dried",
+      "marigold-petals-dried",
+      "dragon-fruit-powder",
+      "orange-powder",
+      "amla-powder",
+      "apple-powder",
+      "tomato-powder",
+      "onion-powder",
+      "carrot-powder",
+      "beetroot-powder",
+      "bitter-gourd-powder",
+      "drumstick-pod-powder",
+      "brinjal-eggplant-powder",
+      "green-chilli-powder",
+      "ginger-powder",
+      "garlic-powder",
+      "safed-musli-root-powder",
+    ];
+
+    // 1. Verify none of the draft slugs appear in the public /products catalogue links
+    await page.goto("/products", { waitUntil: "domcontentloaded" });
+    for (const slug of draftSlugs) {
+      const link = page.locator(`a[href="/products/${slug}"]`);
+      await expect(link).toHaveCount(0);
+    }
+
+    // 2. Verify that direct navigation to sample draft routes returns 404
+    const sampleDrafts = [
+      "neem-leaf-powder",
+      "safed-musli-root-powder",
+      "marigold-petals-dried",
+      "drumstick-pod-powder",
+    ];
+    for (const slug of sampleDrafts) {
+      const response = await page.goto(`/products/${slug}`, {
+        waitUntil: "domcontentloaded",
+      });
+      expect(
+        response?.status(),
+        `Expected HTTP 404 for draft product "${slug}", got ${response?.status()}`
+      ).toBe(404);
+    }
+  });
+
+  test("sitemap.xml includes all eight published products and excludes all 23 draft products", async ({
+    request,
+  }) => {
+    const response = await request.get("/sitemap.xml");
+    expect(response.status()).toBe(200);
+    const xml = await response.text();
+
+    const publishedSlugs = [
+      "banana-powder",
+      "curry-leaves-powder",
+      "lemon-powder",
+      "mango-powder",
+      "moringa-powder",
+      "okra-powder",
+      "papaya-powder",
+      "pineapple-powder",
+    ];
+
+    for (const slug of publishedSlugs) {
+      expect(
+        xml,
+        `Expected sitemap to contain published product "${slug}"`
+      ).toContain(`/products/${slug}`);
+    }
+
+    const draftSlugs = [
+      "guava-leaf-powder",
+      "papaya-leaf-powder",
+      "jamun-leaf-powder",
+      "neem-leaf-powder",
+      "gongura-leaf-powder",
+      "mint-leaf-powder",
+      "desi-gulabi-rose-petals-dried",
+      "marigold-petals-dried",
+      "dragon-fruit-powder",
+      "orange-powder",
+      "amla-powder",
+      "apple-powder",
+      "tomato-powder",
+      "onion-powder",
+      "carrot-powder",
+      "beetroot-powder",
+      "bitter-gourd-powder",
+      "drumstick-pod-powder",
+      "brinjal-eggplant-powder",
+      "green-chilli-powder",
+      "ginger-powder",
+      "garlic-powder",
+      "safed-musli-root-powder",
+    ];
+
+    for (const slug of draftSlugs) {
+      expect(
+        xml,
+        `Expected sitemap to EXCLUDE draft product "${slug}"`
+      ).not.toContain(`/products/${slug}`);
     }
   });
 });

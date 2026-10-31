@@ -1,7 +1,9 @@
 export type ProductCategory =
-  | "Fruit Powders"
   | "Leaf Powders"
+  | "Flower & Petal Products"
+  | "Fruit Powders"
   | "Vegetable Powders"
+  | "Roots, Spices & Specialty Botanicals"
   | "Dehydrated Foods";
 
 export interface Product {

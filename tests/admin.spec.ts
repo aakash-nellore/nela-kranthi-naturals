@@ -239,6 +239,7 @@ test.describe("Authenticated Admin Portal Operations", () => {
     // Verify category select filter
     const categorySelect = page.locator("select");
     await expect(categorySelect.first()).toBeVisible();
+    await expect(categorySelect.first().locator("option")).toHaveCount(7);
 
     // Verify Add Product button
     const addButton = page.getByRole("button", { name: /Add Product/i });
@@ -277,6 +278,7 @@ test.describe("Authenticated Admin Portal Operations", () => {
     await expect(modal.locator("#product-name")).toBeVisible();
     await expect(modal.locator("#product-slug")).toBeVisible();
     await expect(modal.locator("#product-category")).toBeVisible();
+    await expect(modal.locator("#product-category option")).toHaveCount(6);
     await expect(modal.locator("#product-unit")).toBeVisible();
     await expect(modal.locator("#product-image")).toBeVisible();
     await expect(modal.locator("#product-short-description")).toBeVisible();

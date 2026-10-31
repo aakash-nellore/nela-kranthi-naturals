@@ -105,16 +105,22 @@ export default function ProductGrid({ products }: ProductGridProps) {
             </svg>
           </div>
           <h3 className="font-serif text-xl font-bold text-[#1b4332]">
-            Upcoming Specialty Harvest
+            {selectedCategory === "Dehydrated Foods"
+              ? "Upcoming Specialty Harvest"
+              : `Upcoming ${selectedCategory}`}
           </h3>
           <p className="mt-2 text-sm text-[#4a5750] leading-relaxed">
-            Our solar-dehydrated specialty foods (such as sun-cured prawns, dry
-            mutton, and dehydrated fish) are currently being prepared under
-            hygienic seasonal batches.
+            {selectedCategory === "Dehydrated Foods"
+              ? "Our solar-dehydrated specialty foods (such as sun-cured prawns, dry mutton, and dehydrated fish) are currently being prepared under hygienic seasonal batches."
+              : `Our solar-dehydrated ${selectedCategory.toLowerCase()} are currently being harvested and prepared in seasonal batches under hygienic solar dehydration.`}
           </p>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
-              href="/contact?inquiry=Upcoming%20Dehydrated%20Foods"
+              href={`/contact?inquiry=${encodeURIComponent(
+                selectedCategory === "Dehydrated Foods"
+                  ? "Upcoming Dehydrated Foods"
+                  : `Upcoming ${selectedCategory}`
+              )}`}
               className="px-5 py-2.5 rounded-full bg-[#2d6a4f] text-[#fcfaf6] text-xs font-semibold hover:bg-[#1b4332] transition-colors"
             >
               Inquire for Pre-orders

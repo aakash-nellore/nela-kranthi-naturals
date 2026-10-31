@@ -12,9 +12,11 @@ interface ProductTableProps {
 
 const CATEGORIES: (ProductCategory | "All")[] = [
   "All",
-  "Fruit Powders",
   "Leaf Powders",
+  "Flower & Petal Products",
+  "Fruit Powders",
   "Vegetable Powders",
+  "Roots, Spices & Specialty Botanicals",
   "Dehydrated Foods",
 ];
 
@@ -39,12 +41,16 @@ export default function ProductTable({
 
   const getBadgeStyle = (category: string) => {
     switch (category) {
-      case "Fruit Powders":
-        return "bg-amber-50 text-amber-900 border-amber-200";
       case "Leaf Powders":
         return "bg-emerald-50 text-emerald-900 border-emerald-200";
+      case "Flower & Petal Products":
+        return "bg-rose-50 text-rose-900 border-rose-200";
+      case "Fruit Powders":
+        return "bg-amber-50 text-amber-900 border-amber-200";
       case "Vegetable Powders":
         return "bg-lime-50 text-lime-900 border-lime-200";
+      case "Roots, Spices & Specialty Botanicals":
+        return "bg-amber-100/60 text-amber-950 border-amber-300";
       case "Dehydrated Foods":
         return "bg-orange-50 text-orange-900 border-orange-200";
       default:

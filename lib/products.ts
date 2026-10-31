@@ -157,12 +157,26 @@ export async function getAllProducts(): Promise<Product[]> {
 
 /**
  * Fetches all products (including inactive products) for admin management.
+ * In server environments, uses createServerSupabaseClient so authenticated session
+ * cookies are transmitted to Supabase RLS policies.
  * Falls back gracefully to local products if Supabase query fails or returns empty.
  */
 export async function getAllAdminProducts(): Promise<Product[]> {
-  if (supabase) {
+  let client = supabase;
+
+  try {
+    const { createServerSupabaseClient } = await import("@/lib/supabase-server");
+    const serverClient = await createServerSupabaseClient();
+    if (serverClient) {
+      client = serverClient as unknown as typeof supabase;
+    }
+  } catch {
+    // In static rendering or non-cookie contexts, use default client
+  }
+
+  if (client) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from("products")
         .select("*")
         .order("name", { ascending: true });

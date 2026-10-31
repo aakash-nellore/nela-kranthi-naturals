@@ -1,34 +1,39 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Product, ProductCategory } from "@/types";
+import { saveProductAction, uploadProductImageAction } from "@/lib/product-actions";
 
 interface ProductModalProps {
   isOpen: boolean;
   onClose: () => void;
   product?: Product | null;
+  onSaved?: (savedProduct: Product) => void;
 }
 
 const CATEGORIES: ProductCategory[] = [
-  "Fruit Powders",
   "Leaf Powders",
+  "Flower & Petal Products",
+  "Fruit Powders",
   "Vegetable Powders",
+  "Roots, Spices & Specialty Botanicals",
   "Dehydrated Foods",
 ];
 
 interface ProductFormContentProps {
   product?: Product | null;
   onClose: () => void;
+  onSaved?: (savedProduct: Product) => void;
 }
 
-function ProductFormContent({ product, onClose }: ProductFormContentProps) {
+function ProductFormContent({ product, onClose, onSaved }: ProductFormContentProps) {
   const isEditing = Boolean(product);
 
   const [name, setName] = useState(product?.name ?? "");
   const [slug, setSlug] = useState(product?.slug ?? "");
   const [category, setCategory] = useState<ProductCategory>(
-    product?.category ?? "Fruit Powders"
+    product?.category ?? "Leaf Powders"
   );
   const [shortDescription, setShortDescription] = useState(
     product?.shortDescription ?? ""
@@ -38,11 +43,18 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
   const [imageUrl, setImageUrl] = useState(product?.image ?? "");
   const [isActive, setIsActive] = useState(product?.available ?? true);
 
-  // Security notification state
+  // Submission and upload states
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  // Security and validation feedback state
   const [feedback, setFeedback] = useState<{
-    type: "info" | "warning";
+    type: "info" | "warning" | "success";
     message: string;
   } | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-generate slug from name if adding new product
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,15 +91,80 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
 
   const resolvedPreviewUrl = getPreviewUrl(imageUrl);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Direct image file upload handler
+  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    // Security check: Explain that write operations are locked pending full authentication
-    setFeedback({
-      type: "warning",
-      message:
-        "Authorization Required: Direct product mutations (INSERT / UPDATE) are write-locked in Foundation Mode. Supabase Row Level Security restricts public/anonymous writes. To commit persistent changes, authenticated admin credentials must be configured (Priority 4).",
-    });
+    setIsUploading(true);
+    setUploadError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("slug", slug || "product");
+
+      const result = await uploadProductImageAction(formData);
+
+      if (result.success && result.filename) {
+        setImageUrl(result.filename);
+        setFeedback({
+          type: "info",
+          message: `Image "${file.name}" uploaded successfully to product-images bucket.`,
+        });
+      } else {
+        setUploadError(result.error || "Failed to upload image.");
+      }
+    } catch (err: unknown) {
+      setUploadError(err instanceof Error ? err.message : "Image upload failed.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setFeedback(null);
+
+    try {
+      const result = await saveProductAction({
+        id: product?.id,
+        name,
+        slug,
+        category,
+        unit,
+        imageUrl,
+        shortDescription,
+        description,
+        isActive,
+      });
+
+      if (!result.success) {
+        setFeedback({
+          type: "warning",
+          message: result.error || "Failed to save product.",
+        });
+      } else {
+        setFeedback({
+          type: "success",
+          message: result.message || "Product saved successfully.",
+        });
+        if (result.product && onSaved) {
+          onSaved(result.product);
+        }
+        setTimeout(() => {
+          onClose();
+        }, 1200);
+      }
+    } catch (err: unknown) {
+      setFeedback({
+        type: "warning",
+        message: err instanceof Error ? err.message : "An unexpected error occurred.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -144,10 +221,10 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
             </svg>
             <div>
               <strong className="font-semibold text-amber-900">
-                Admin Foundation Security Notice:
+                Admin Security & Authorization:
               </strong>{" "}
-              Anonymous write access is prohibited by Supabase Row Level Security (RLS).
-              Full database write capability requires an authenticated admin session (Priority 4).
+              Changes are validated server-side and executed under verified administrator credentials.
+              Anonymous and untrusted writes are strictly denied by PostgreSQL Row Level Security (RLS).
             </div>
           </div>
         </div>
@@ -156,7 +233,9 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
         {feedback && (
           <div
             className={`p-4 rounded-2xl text-xs sm:text-sm border ${
-              feedback.type === "warning"
+              feedback.type === "success"
+                ? "bg-emerald-50 border-emerald-300 text-emerald-900"
+                : feedback.type === "warning"
                 ? "bg-amber-100/70 border-amber-300 text-amber-900"
                 : "bg-blue-50 border-blue-200 text-blue-900"
             }`}
@@ -250,16 +329,16 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
           </div>
         </div>
 
-        {/* Image URL & Live Preview */}
-        <div>
+        {/* Image Reference & Upload */}
+        <div className="space-y-3">
           <label
             htmlFor="product-image"
-            className="block text-xs font-semibold uppercase tracking-wider text-[#3f4e46] mb-1.5"
+            className="block text-xs font-semibold uppercase tracking-wider text-[#3f4e46]"
           >
-            Image Reference / Storage URL
+            Product Image (Supabase Storage / URL)
           </label>
           <div className="flex flex-col sm:flex-row items-start gap-3">
-            <div className="flex-1 w-full">
+            <div className="flex-1 w-full space-y-2">
               <input
                 id="product-image"
                 type="text"
@@ -268,9 +347,47 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
                 placeholder="e.g. Banana-Flour-550x550.webp or /images/products/banana-powder.jpg"
                 className="w-full px-3.5 py-2.5 rounded-xl border border-[#ded5c5] bg-white text-base sm:text-sm text-[#1b4332] placeholder-[#8d7c68] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
               />
-              <p className="text-[11px] text-[#7d6c56] mt-1">
-                Accepts filenames in Supabase `product-images` bucket, full HTTPS URLs, or public paths.
-              </p>
+
+              {/* Direct File Upload Trigger */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageFileChange}
+                  accept="image/jpeg,image/png,image/webp,image/avif"
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  disabled={isUploading}
+                  onClick={() => fileInputRef.current?.click()}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#ded5c5] bg-[#f8f5ee] text-xs font-medium text-[#1b4332] hover:bg-[#ede5d8] transition-colors disabled:opacity-50"
+                >
+                  <svg
+                    className="w-3.5 h-3.5 text-[#2d6a4f]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                    />
+                  </svg>
+                  <span>{isUploading ? "Uploading..." : "Upload New Image"}</span>
+                </button>
+                <span className="text-[11px] text-[#7d6c56]">
+                  Max 5MB (JPG, PNG, WebP, AVIF)
+                </span>
+              </div>
+
+              {uploadError && (
+                <p className="text-[11px] text-red-600 font-medium">
+                  {uploadError}
+                </p>
+              )}
             </div>
 
             {/* Thumbnail Preview Box */}
@@ -360,17 +477,28 @@ function ProductFormContent({ product, onClose }: ProductFormContentProps) {
         <div className="pt-4 border-t border-[#eee7db] flex flex-col-reverse sm:flex-row items-center justify-end gap-3">
           <button
             type="button"
+            disabled={isSubmitting}
             onClick={onClose}
-            className="w-full sm:w-auto px-5 py-3 sm:py-2.5 min-h-[44px] sm:min-h-0 rounded-full border border-[#ded5c5] text-xs sm:text-sm font-semibold text-[#4a5750] hover:bg-[#f3ede3] transition-colors inline-flex items-center justify-center"
+            className="w-full sm:w-auto px-5 py-3 sm:py-2.5 min-h-[44px] sm:min-h-0 rounded-full border border-[#ded5c5] text-xs sm:text-sm font-semibold text-[#4a5750] hover:bg-[#f3ede3] transition-colors inline-flex items-center justify-center disabled:opacity-50"
           >
             Cancel
           </button>
 
           <button
             type="submit"
-            className="w-full sm:w-auto px-6 py-3 sm:py-2.5 min-h-[44px] sm:min-h-0 rounded-full bg-[#2d6a4f] text-[#fcfaf6] text-xs sm:text-sm font-semibold hover:bg-[#1b4332] transition-colors shadow-xs focus-visible:outline-2 focus-visible:outline-[#2d6a4f] inline-flex items-center justify-center"
+            disabled={isSubmitting}
+            className="w-full sm:w-auto px-6 py-3 sm:py-2.5 min-h-[44px] sm:min-h-0 rounded-full bg-[#2d6a4f] text-[#fcfaf6] text-xs sm:text-sm font-semibold hover:bg-[#1b4332] transition-colors shadow-xs focus-visible:outline-2 focus-visible:outline-[#2d6a4f] inline-flex items-center justify-center disabled:opacity-50"
           >
-            {isEditing ? "Save Changes" : "Create Product"}
+            {isSubmitting ? (
+              <span className="flex items-center gap-2">
+                <span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                <span>Saving...</span>
+              </span>
+            ) : isEditing ? (
+              "Save Changes"
+            ) : (
+              "Create Product"
+            )}
           </button>
         </div>
       </form>
@@ -382,6 +510,7 @@ export default function ProductModal({
   isOpen,
   onClose,
   product,
+  onSaved,
 }: ProductModalProps) {
   // Handle escape key to close modal
   useEffect(() => {
@@ -408,6 +537,7 @@ export default function ProductModal({
           key={product?.id ?? "new-product"}
           product={product}
           onClose={onClose}
+          onSaved={onSaved}
         />
       </div>
     </div>

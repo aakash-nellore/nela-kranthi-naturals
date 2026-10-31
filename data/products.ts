@@ -2,9 +2,11 @@ import { Product, ProductCategory } from "@/types";
 
 export const CATEGORIES: (ProductCategory | "All")[] = [
   "All",
-  "Fruit Powders",
   "Leaf Powders",
+  "Flower & Petal Products",
+  "Fruit Powders",
   "Vegetable Powders",
+  "Roots, Spices & Specialty Botanicals",
   "Dehydrated Foods",
 ];
 

@@ -12,7 +12,7 @@ interface AdminProductsManagerProps {
 export default function AdminProductsManager({
   initialProducts,
 }: AdminProductsManagerProps) {
-  const [products] = useState<Product[]>(initialProducts);
+  const [products, setProducts] = useState<Product[]>(initialProducts);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
@@ -31,10 +31,29 @@ export default function AdminProductsManager({
     setSelectedProduct(null);
   };
 
-  // Metrics
+  const handleProductSaved = (savedProduct: Product) => {
+    setProducts((prev) => {
+      const existsIndex = prev.findIndex(
+        (p) => p.id === savedProduct.id || p.slug === savedProduct.slug
+      );
+      if (existsIndex !== -1) {
+        const next = [...prev];
+        next[existsIndex] = savedProduct;
+        return next;
+      }
+      return [savedProduct, ...prev];
+    });
+  };
+
+  // Dynamic Metrics
   const totalProducts = products.length;
   const activeProducts = products.filter((p) => p.available).length;
+  const draftProducts = products.filter((p) => !p.available).length;
   const uniqueCategories = new Set(products.map((p) => p.category)).size;
+  const activePercent =
+    totalProducts > 0
+      ? `${Math.round((activeProducts / totalProducts) * 100)}% Active`
+      : "0% Active";
 
   return (
     <div className="space-y-8">
@@ -60,16 +79,15 @@ export default function AdminProductsManager({
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-serif font-bold text-base sm:text-lg text-amber-950">
-                  Admin Security Status: Foundation Mode
+                  Admin Security Status: Authenticated DAL Guard
                 </h3>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-200/80 text-amber-900">
-                  Write-Locked
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300">
+                  Server Guard Active
                 </span>
               </div>
               <p className="mt-1 text-xs sm:text-sm text-amber-900/90 leading-relaxed max-w-3xl">
-                This administration interface operates in read-only foundation mode.
-                Public and anonymous clients are restricted from executing INSERT, UPDATE, or DELETE operations by PostgreSQL Row Level Security (RLS).
-                Before production deployment of write features, Supabase Authentication and server-side admin authorization must be configured.
+                Product mutations are executed through server-side actions guarded by <code>requireAdminSession()</code>.
+                Production database writes and draft inspection require executing the least-privilege RLS migration script (<code>scripts/enable-admin-product-management-rls.sql</code>) in the Supabase Dashboard SQL Editor.
               </p>
             </div>
           </div>
@@ -94,7 +112,9 @@ export default function AdminProductsManager({
             <p className="font-serif text-3xl font-bold text-[#1b4332]">
               {totalProducts}
             </p>
-            <span className="text-xs text-[#52796f] font-medium">8 Seeded</span>
+            <span className="text-xs text-[#52796f] font-medium">
+              {draftProducts > 0 ? `${draftProducts} Drafts` : "All Published"}
+            </span>
           </div>
           <p className="mt-1 text-[11px] text-[#7d6c56]">
             Managed via public.products
@@ -112,7 +132,7 @@ export default function AdminProductsManager({
             </p>
             <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-800">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
-              100% Active
+              {activePercent}
             </span>
           </div>
           <p className="mt-1 text-[11px] text-[#7d6c56]">
@@ -129,10 +149,12 @@ export default function AdminProductsManager({
             <p className="font-serif text-3xl font-bold text-[#1b4332]">
               {uniqueCategories}
             </p>
-            <span className="text-xs text-[#52796f] font-medium">3 of 4 active</span>
+            <span className="text-xs text-[#52796f] font-medium">
+              {uniqueCategories} of 6 active
+            </span>
           </div>
           <p className="mt-1 text-[11px] text-[#7d6c56]">
-            Fruit, Leaf, Veg, Dehydrated
+            Leaf, Flower, Fruit, Veg, Roots, Dehydrated
           </p>
         </div>
 
@@ -143,7 +165,7 @@ export default function AdminProductsManager({
           </p>
           <div className="mt-2 flex items-baseline justify-between">
             <p className="font-serif text-2xl font-bold text-[#1b4332]">
-              RLS Read-Only
+              RLS Protected
             </p>
           </div>
           <p className="mt-1 text-[11px] text-[#7d6c56]">
@@ -164,6 +186,7 @@ export default function AdminProductsManager({
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         product={selectedProduct}
+        onSaved={handleProductSaved}
       />
     </div>
   );
