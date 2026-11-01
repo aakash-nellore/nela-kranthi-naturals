@@ -155,43 +155,187 @@ export async function getAllProducts(): Promise<Product[]> {
   return fallbackProducts.filter((p) => p.available);
 }
 
+export interface AdminProductsResult {
+  products: Product[];
+  error: string | null;
+  errorCode?: "AUTH_REQUIRED" | "ROLE_REQUIRED" | "DB_ERROR" | "CONFIG_ERROR" | null;
+}
+
+export interface AdminClientLike {
+  auth?: {
+    getUser: () => Promise<{
+      data: {
+        user: {
+          id?: string;
+          email?: string | null;
+          app_metadata?: Record<string, unknown> | null;
+        } | null;
+      } | null;
+      error: { message: string } | null;
+    }>;
+  };
+  from: (table: string) => {
+    select: (columns?: string) => {
+      order: (
+        column: string,
+        options?: { ascending?: boolean }
+      ) => Promise<{
+        data: SupabaseProductRow[] | null;
+        error: { message: string } | null;
+      }>;
+    };
+  };
+}
+
+export interface GetAllAdminProductsOptions {
+  client?: AdminClientLike;
+  bypassRoleCheck?: boolean;
+}
+
 /**
- * Fetches all products (including inactive products) for admin management.
- * In server environments, uses createServerSupabaseClient so authenticated session
- * cookies are transmitted to Supabase RLS policies.
- * Falls back gracefully to local products if Supabase query fails or returns empty.
+ * Fetches all products (including inactive products) exclusively for authenticated administrators.
+ *
+ * SECURITY INVARIANTS:
+ * 1. Exclusively uses the cookie-authenticated Supabase server client (createServerSupabaseClient).
+ * 2. NEVER silently falls back to the anonymous client.
+ * 3. NEVER returns hardcoded fallbackProducts.
+ * 4. Does NOT filter is_active = true, allowing full draft catalogue retrieval.
+ * 5. Checks trusted authenticated admin identity and server-controlled app_metadata.role.
+ * 6. Uses Supabase Auth verification (getUser) rather than trusting client JWTs alone.
+ * 7. Reports an explicit authorization error if the admin role is missing.
+ * 8. Reports a clear database error if the database query fails.
+ * 9. Never logs access tokens, passwords or secrets.
+ * 10. Does NOT bypass RLS using service-role credentials.
  */
-export async function getAllAdminProducts(): Promise<Product[]> {
-  let client = supabase;
+export async function getAllAdminProducts(
+  options?: GetAllAdminProductsOptions
+): Promise<AdminProductsResult> {
+  let client = options?.client;
 
-  try {
-    const { createServerSupabaseClient } = await import("@/lib/supabase-server");
-    const serverClient = await createServerSupabaseClient();
-    if (serverClient) {
-      client = serverClient as unknown as typeof supabase;
-    }
-  } catch {
-    // In static rendering or non-cookie contexts, use default client
-  }
-
-  if (client) {
+  // 1. Exclusively use cookie-authenticated Supabase server client
+  if (!client) {
     try {
-      const { data, error } = await client
-        .from("products")
-        .select("*")
-        .order("name", { ascending: true });
-
-      if (error) {
-        console.error("Supabase error fetching admin products:", error.message);
-      } else if (data && data.length > 0) {
-        return (data as SupabaseProductRow[]).map(mapSupabaseRowToProduct);
+      const { createServerSupabaseClient } = await import("@/lib/supabase-server");
+      const serverClient = await createServerSupabaseClient();
+      if (serverClient) {
+        client = serverClient as unknown as AdminClientLike;
       }
-    } catch (err) {
-      console.error("Unexpected error reading admin products from Supabase:", err);
+    } catch {
+      return {
+        products: [],
+        error: "Server configuration error: Failed to initialize Supabase server client.",
+        errorCode: "CONFIG_ERROR",
+      };
     }
   }
 
-  return fallbackProducts;
+  if (!client) {
+    return {
+      products: [],
+      error: "Database configuration error: Supabase client is not configured.",
+      errorCode: "CONFIG_ERROR",
+    };
+  }
+
+  // 2. Server-side identity & role verification
+  let isAdminAuthorized = Boolean(options?.bypassRoleCheck);
+
+  if (!isAdminAuthorized) {
+    // Check test session bypass (strictly permitted only in isolated CI/local test environments)
+    try {
+      const { isTestSessionPermitted, TEST_ADMIN_COOKIE } = await import("@/lib/auth-constants");
+      if (isTestSessionPermitted()) {
+        const { cookies } = await import("next/headers");
+        const cookieStore = await cookies();
+        if (cookieStore.get(TEST_ADMIN_COOKIE)?.value === "true") {
+          isAdminAuthorized = true;
+        }
+      }
+    } catch {
+      // next/headers might not be available in non-server-component contexts
+    }
+  }
+
+  // Supabase Auth server-side verification: verifies session with auth service & checks server-controlled app_metadata
+  if (!isAdminAuthorized) {
+    if (!client.auth) {
+      return {
+        products: [],
+        error: "Authentication required: Auth client is unavailable.",
+        errorCode: "AUTH_REQUIRED",
+      };
+    }
+
+    try {
+      const authResult = await client.auth.getUser();
+      const authData = authResult?.data;
+      const authError = authResult?.error;
+
+      if (authError || !authData?.user) {
+        return {
+          products: [],
+          error: "Authentication required: Administrator session not found. Please sign in to access the product catalogue.",
+          errorCode: "AUTH_REQUIRED",
+        };
+      }
+
+      const user = authData.user;
+      const appRole = (user.app_metadata?.role as string | undefined)?.toLowerCase();
+      const hasAdminRole = appRole === "admin" || appRole === "superadmin";
+
+      if (!hasAdminRole) {
+        return {
+          products: [],
+          error: "Access Denied: Administrative privileges ('admin' role) are required in database metadata. If the admin role was recently granted, please sign out and sign in again to refresh your session.",
+          errorCode: "ROLE_REQUIRED",
+        };
+      }
+
+      isAdminAuthorized = true;
+    } catch (authErr: unknown) {
+      const msg = authErr instanceof Error ? authErr.message : "Authentication verification failed";
+      return {
+        products: [],
+        error: `Authentication error: ${msg}`,
+        errorCode: "AUTH_REQUIRED",
+      };
+    }
+  }
+
+  // 3. Query all products from Supabase PostgreSQL without filtering is_active = true
+  try {
+    const { data, error } = await client
+      .from("products")
+      .select("*")
+      .order("name", { ascending: true });
+
+    if (error) {
+      return {
+        products: [],
+        error: `Database Error: Failed to fetch products from Supabase (${error.message || "Unknown error"}).`,
+        errorCode: "DB_ERROR",
+      };
+    }
+
+    if (!data) {
+      return {
+        products: [],
+        error: null,
+      };
+    }
+
+    return {
+      products: (data as SupabaseProductRow[]).map(mapSupabaseRowToProduct),
+      error: null,
+    };
+  } catch (dbErr: unknown) {
+    const msg = dbErr instanceof Error ? dbErr.message : "Unexpected database error";
+    return {
+      products: [],
+      error: `Database Error: ${msg}`,
+      errorCode: "DB_ERROR",
+    };
+  }
 }
 
 /**

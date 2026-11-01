@@ -4,6 +4,7 @@ import {
   isUserAdmin,
   TEST_ADMIN_COOKIE,
   isTestSessionPermitted,
+  ADMIN_ROLES,
   type AdminUser,
 } from "@/lib/auth-constants";
 
@@ -27,6 +28,7 @@ export async function getAdminSession(): Promise<AdminUser | null> {
           email: process.env.TEST_ADMIN_EMAIL || "nelakranthinaturals@gmail.com",
           role: "admin",
           lastSignInAt: new Date().toISOString(),
+          hasDatabaseRole: true,
         };
       }
     }
@@ -45,14 +47,18 @@ export async function getAdminSession(): Promise<AdminUser | null> {
       return null;
     }
 
-    const role =
-      (user.app_metadata?.role as string) || "admin";
+    const appRole = (user.app_metadata?.role as string | undefined)?.toLowerCase();
+    const hasDatabaseRole = Boolean(
+      appRole && ADMIN_ROLES.includes(appRole as (typeof ADMIN_ROLES)[number])
+    );
+    const role = (user.app_metadata?.role as string) || "admin";
 
     return {
       id: user.id,
       email: user.email || "",
       role,
       lastSignInAt: user.last_sign_in_at,
+      hasDatabaseRole,
     };
   } catch (err) {
     console.error("Error retrieving admin session:", err);

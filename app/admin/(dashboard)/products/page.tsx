@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminProductsPage() {
-  const products = await getAllAdminProducts();
+  const { products, error } = await getAllAdminProducts();
 
   return (
     <main className="min-h-screen bg-[#fcfaf6] py-10 sm:py-14 lg:py-16">
@@ -82,7 +82,7 @@ export default async function AdminProductsPage() {
         </div>
 
         {/* Admin Product Manager Component */}
-        <AdminProductsManager initialProducts={products} />
+        <AdminProductsManager initialProducts={products} error={error} />
       </div>
     </main>
   );

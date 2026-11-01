@@ -11,12 +11,13 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminDashboardPage() {
-  const products = await getAllAdminProducts();
+  const { products, error } = await getAllAdminProducts();
 
   const totalProducts = products.length;
   const publishedProducts = products.filter((p) => p.available).length;
   const draftProducts = products.filter((p) => !p.available).length;
-  const categoriesCount = new Set(products.map((p) => p.category)).size;
+  const populatedCategoriesCount = new Set(products.map((p) => p.category)).size;
+  const TOTAL_TAXONOMY_CATEGORIES = 6;
 
   return (
     <main className="py-8 sm:py-10 lg:py-12">
@@ -56,47 +57,98 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Security & Authentication Notice */}
-        <div className="rounded-2xl bg-amber-50 border border-amber-200/90 p-5 sm:p-6 text-amber-950">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="flex items-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-amber-200/80 text-amber-900 flex items-center justify-center shrink-0 mt-0.5">
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="font-serif font-bold text-sm sm:text-base text-amber-950">
-                    Phase: Priority 3 — Admin Panel Foundation
-                  </h3>
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">
-                    Read-Only Mode
-                  </span>
+        {error ? (
+          <div
+            id="admin-dashboard-error"
+            role="alert"
+            className="rounded-2xl bg-rose-50 border border-rose-200/90 p-5 sm:p-6 text-rose-950"
+          >
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 rounded-xl bg-rose-200/80 text-rose-900 flex items-center justify-center shrink-0 mt-0.5">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                    />
+                  </svg>
                 </div>
-                <p className="mt-1 text-xs sm:text-sm text-amber-900/90 leading-relaxed max-w-3xl">
-                  The dashboard architecture is established. Direct write operations to PostgreSQL are protected by Supabase Row Level Security (RLS). Admin authentication and session management will be activated in <strong>Priority 4</strong>.
-                </p>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="font-serif font-bold text-sm sm:text-base text-rose-950">
+                      Catalogue Authorization & Synchronization Notice
+                    </h3>
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-200 text-rose-900">
+                      Attention Required
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs sm:text-sm text-rose-900/90 leading-relaxed max-w-3xl">
+                    {error}
+                  </p>
+                </div>
               </div>
-            </div>
 
-            <div className="shrink-0 flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-amber-900 border border-amber-300 text-xs font-semibold">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                Live Sync Active
-              </span>
+              <div className="shrink-0 flex items-center gap-2">
+                <Link
+                  href="/admin"
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-rose-900 border border-rose-300 text-xs font-semibold hover:bg-rose-100 transition-colors"
+                >
+                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                  Retry Sync
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="rounded-2xl bg-emerald-50/80 border border-emerald-200/90 p-5 sm:p-6 text-emerald-950">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 rounded-xl bg-emerald-200/80 text-emerald-900 flex items-center justify-center shrink-0 mt-0.5">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="font-serif font-bold text-sm sm:text-base text-emerald-950">
+                      Admin Security Status: Active Authenticated DAL Guard
+                    </h3>
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-900">
+                      RBAC Enforced
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs sm:text-sm text-emerald-900/90 leading-relaxed max-w-3xl">
+                    Product catalogue management and draft records are protected by server-side verification and Supabase PostgreSQL Row Level Security (RLS). Public visitors and anonymous queries cannot inspect unpublished drafts.
+                  </p>
+                </div>
+              </div>
+
+              <div className="shrink-0 flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-emerald-900 border border-emerald-300 text-xs font-semibold">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  Live Sync Active
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* KPI Summary Cards */}
         <section aria-labelledby="metrics-heading">
@@ -197,14 +249,14 @@ export default async function AdminDashboardPage() {
               </div>
               <div className="mt-3 flex items-baseline justify-between">
                 <p className="font-serif text-3xl font-bold text-[#1b4332]">
-                  {categoriesCount}
+                  {populatedCategoriesCount}
                 </p>
                 <span className="text-xs text-[#52796f] font-medium">
-                  Fruit, Leaf, Veg
+                  {populatedCategoriesCount} of {TOTAL_TAXONOMY_CATEGORIES} populated
                 </span>
               </div>
               <p className="mt-1 text-[11px] text-[#7d6c56]">
-                4 defined in taxonomy
+                6 defined; Dehydrated Foods upcoming
               </p>
             </div>
           </div>
@@ -375,7 +427,13 @@ export default async function AdminDashboardPage() {
                   ) : (
                     <tr>
                       <td colSpan={5} className="py-8 text-center text-[#7d6c56] text-xs">
-                        No product records available in database.
+                        {error ? (
+                          <span className="text-rose-700 font-medium">
+                            {error}
+                          </span>
+                        ) : (
+                          "No product records available in database."
+                        )}
                       </td>
                     </tr>
                   )}

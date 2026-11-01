@@ -6,6 +6,7 @@ export interface AdminUser {
   email: string;
   role: string;
   lastSignInAt?: string;
+  hasDatabaseRole?: boolean;
 }
 
 export interface UserLike {

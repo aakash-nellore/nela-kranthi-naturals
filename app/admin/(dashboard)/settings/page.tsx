@@ -65,7 +65,7 @@ export default function AdminSettingsPage() {
                   Primary Table:
                 </span>
                 <p className="font-mono text-xs text-[#7d6c56] mt-0.5">
-                  public.products (RLS Read-Only Enforced)
+                  public.products (RLS Authenticated RBAC Enforced)
                 </p>
               </div>
 
@@ -74,7 +74,7 @@ export default function AdminSettingsPage() {
                   Client Key Scope:
                 </span>
                 <p className="text-xs text-[#52796f] mt-0.5">
-                  Public Anonymous Key (Least-privilege; service-role keys are strictly excluded)
+                  Public Anonymous Key with Cookie-Forwarded Authenticated Sessions (Least-privilege; service-role keys are strictly excluded)
                 </p>
               </div>
             </div>
