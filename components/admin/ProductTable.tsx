@@ -27,6 +27,7 @@ export default function ProductTable({
 }: ProductTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<ProductCategory | "All">("All");
+  const [statusFilter, setStatusFilter] = useState<"All" | "Active" | "Inactive">("All");
 
   const filteredProducts = useMemo(() => {
     return products.filter((item) => {
@@ -35,9 +36,13 @@ export default function ProductTable({
         item.slug.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory =
         selectedCategory === "All" || item.category === selectedCategory;
-      return matchesSearch && matchesCategory;
+      const matchesStatus =
+        statusFilter === "All" ||
+        (statusFilter === "Active" && item.available) ||
+        (statusFilter === "Inactive" && !item.available);
+      return matchesSearch && matchesCategory && matchesStatus;
     });
-  }, [products, searchQuery, selectedCategory]);
+  }, [products, searchQuery, selectedCategory, statusFilter]);
 
   const getBadgeStyle = (category: string) => {
     switch (category) {
@@ -87,12 +92,13 @@ export default function ProductTable({
             </svg>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <select
               value={selectedCategory}
               onChange={(e) =>
                 setSelectedCategory(e.target.value as ProductCategory | "All")
               }
+              aria-label="Filter by category"
               className="px-3.5 py-2 rounded-full border border-[#ded5c5] bg-white text-base sm:text-sm text-[#1b4332] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
             >
               {CATEGORIES.map((cat) => (
@@ -102,12 +108,26 @@ export default function ProductTable({
               ))}
             </select>
 
-            {(searchQuery || selectedCategory !== "All") && (
+            <select
+              value={statusFilter}
+              onChange={(e) =>
+                setStatusFilter(e.target.value as "All" | "Active" | "Inactive")
+              }
+              aria-label="Filter by publication status"
+              className="px-3.5 py-2 rounded-full border border-[#ded5c5] bg-white text-base sm:text-sm text-[#1b4332] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
+            >
+              <option value="All">All Statuses</option>
+              <option value="Active">Active / Published</option>
+              <option value="Inactive">Inactive / Draft</option>
+            </select>
+
+            {(searchQuery || selectedCategory !== "All" || statusFilter !== "All") && (
               <button
                 type="button"
                 onClick={() => {
                   setSearchQuery("");
                   setSelectedCategory("All");
+                  setStatusFilter("All");
                 }}
                 className="text-xs text-[#2d6a4f] hover:underline font-medium px-2 py-1"
               >

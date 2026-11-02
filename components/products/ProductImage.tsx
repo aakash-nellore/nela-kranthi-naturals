@@ -64,15 +64,15 @@ export default function ProductImage({
   // Fallback: Elegant visual placeholder when image is null, empty, or fails to load
   if (variant === "detail") {
     return (
-      <div className="relative aspect-4/3 w-full rounded-2xl bg-gradient-to-br from-[#f8f5ee] to-[#ece3d4] border border-[#ded5c5] flex flex-col items-center justify-center p-8 text-center overflow-hidden">
-        {/* Decorative radial gradient */}
+      <div className="relative aspect-4/3 w-full rounded-2xl bg-gradient-to-br from-[#fcfaf6] via-[#f8f5ee] to-[#ece3d4] border border-[#ded5c5] flex flex-col items-center justify-center p-8 text-center overflow-hidden">
+        {/* Decorative subtle sunbeam background element with muted gold aura */}
         <div
-          className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-100/40 via-transparent to-transparent pointer-events-none"
+          className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#c5a059]/15 via-transparent to-transparent pointer-events-none"
           aria-hidden="true"
         />
 
-        {/* Botanical Icon Treatment */}
-        <div className="w-20 h-20 rounded-3xl bg-[#2d6a4f]/10 text-[#2d6a4f] flex items-center justify-center mb-4 shadow-2xs">
+        {/* Botanical Icon Treatment with Forest Green */}
+        <div className="w-20 h-20 rounded-3xl bg-[#123D29]/10 text-[#123D29] border border-[#123D29]/15 flex items-center justify-center mb-4 shadow-2xs">
           <svg
             className="w-10 h-10"
             viewBox="0 0 24 24"
@@ -88,28 +88,29 @@ export default function ProductImage({
           </svg>
         </div>
 
-        <p className="font-serif font-bold text-xl text-[#1b4332]">{productName}</p>
+        <p className="font-serif font-bold text-xl text-[#123D29]">{productName}</p>
         <p className="text-xs text-[#52796f] max-w-xs mt-1">
           Solar-Dehydrated Natural Food Product
         </p>
-        <p className="mt-4 text-[11px] font-medium text-[#7d6c56] bg-white/90 px-3.5 py-1.5 rounded-full border border-[#ded5c5]">
-          Official Product Photograph Ready
-        </p>
+        <div className="mt-4 inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#8c6d23] bg-[#fdfbf7] px-3.5 py-1.5 rounded-full border border-[#c5a059]/40 shadow-2xs">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059]" />
+          <span>Naturally Crafted • Solar Dehydrated</span>
+        </div>
       </div>
     );
   }
 
   // Card Variant Fallback
   return (
-    <div className="relative aspect-4/3 w-full bg-gradient-to-br from-[#f8f5ee] to-[#ece3d4] flex flex-col items-center justify-center p-6 border-b border-[#eee7db] overflow-hidden">
-      {/* Decorative subtle sunbeam background element */}
+    <div className="relative aspect-4/3 w-full bg-gradient-to-br from-[#fcfaf6] via-[#f8f5ee] to-[#ece3d4] flex flex-col items-center justify-center p-6 border-b border-[#eee7db] overflow-hidden">
+      {/* Decorative subtle sunbeam background element with muted gold aura */}
       <div
-        className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-100/30 via-transparent to-transparent pointer-events-none"
+        className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#c5a059]/15 via-transparent to-transparent pointer-events-none"
         aria-hidden="true"
       />
 
-      {/* Botanical / Leaf Icon treatment */}
-      <div className="w-14 h-14 rounded-2xl bg-[#2d6a4f]/10 text-[#2d6a4f] flex items-center justify-center transition-transform group-hover:scale-105 duration-200 shadow-2xs">
+      {/* Botanical / Leaf Icon treatment with Forest Green */}
+      <div className="w-14 h-14 rounded-2xl bg-[#123D29]/10 text-[#123D29] border border-[#123D29]/15 flex items-center justify-center transition-transform group-hover:scale-105 duration-200 shadow-2xs">
         <svg
           className="w-7 h-7"
           viewBox="0 0 24 24"
@@ -125,8 +126,8 @@ export default function ProductImage({
         </svg>
       </div>
 
-      {/* Organic Solar Dehydrated Tag */}
-      <span className="mt-3 text-[11px] font-medium tracking-wide uppercase text-[#52796f] bg-white/80 px-2.5 py-0.5 rounded-full border border-[#ded5c5]">
+      {/* Muted Gold and Forest Green Tag */}
+      <span className="mt-3 text-[11px] font-medium tracking-wide uppercase text-[#123D29] bg-[#fdfbf7] px-2.5 py-0.5 rounded-full border border-[#c5a059]/40 shadow-2xs">
         Solar Dehydrated
       </span>
     </div>
