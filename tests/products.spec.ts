@@ -279,7 +279,9 @@ test.describe("Products Catalogue & Detail Pages", () => {
   });
 
   test("production safety: local fallback is strictly prohibited in production and Vercel environments", async () => {
-    // Simulating Vercel environment
+
+    // 1. Simulating Vercel production environment
+    // 1. Simulating Vercel production environment
     const originalVercel = process.env.VERCEL;
     try {
       process.env.VERCEL = "1";
@@ -292,7 +294,20 @@ test.describe("Products Catalogue & Detail Pages", () => {
       }
     }
 
-    // Simulating Production environment without explicit opt-in
+    // 2. Simulating Vercel preview/dev environment
+    const originalVercelEnv = process.env.VERCEL_ENV;
+    try {
+      process.env.VERCEL_ENV = "preview";
+      expect(isLocalFallbackPermitted()).toBe(false);
+    } finally {
+      if (originalVercelEnv === undefined) {
+        delete process.env.VERCEL_ENV;
+      } else {
+        process.env.VERCEL_ENV = originalVercelEnv;
+      }
+    }
+
+    // 3. Simulating Production environment without explicit opt-in
     const originalNodeEnv = process.env.NODE_ENV;
     const originalAllow = process.env.ALLOW_LOCAL_FALLBACK;
     try {

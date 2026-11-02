@@ -25,6 +25,9 @@ jobs:
     name: Build & Automated Tests
     runs-on: ubuntu-latest
     if: github.event_name != 'workflow_dispatch' || inputs.target_url == ''
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
     steps:
       - name: Check out repository
@@ -47,6 +50,9 @@ jobs:
 
       - name: Build Next.js production bundle
         run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
       - name: Cache Playwright browser binaries
         uses: actions/cache@v4
@@ -68,6 +74,8 @@ jobs:
         env:
           CI: true
           ALLOW_TEST_ADMIN_SESSION: "true"
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
       - name: Upload Playwright test report artifact
         if: always()
@@ -98,7 +106,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js (LTS 20)
+      - name: Setup Node.js (LTS 22)
         uses: actions/setup-node@v4
         with:
           node-version: 22
