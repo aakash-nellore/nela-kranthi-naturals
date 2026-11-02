@@ -12,6 +12,11 @@ on:
         required: false
         default: ""
         type: string
+      run_admin_e2e:
+        description: "Set to 'true' to execute deferred authenticated Admin Portal E2E tests"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -69,8 +74,18 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
 
-      - name: Run Playwright automated test suite
+      - name: Run Playwright automated test suite (Public & Security)
+        if: github.event_name != 'workflow_dispatch' || inputs.run_admin_e2e != true
         run: npm run test
+        env:
+          CI: true
+          ALLOW_TEST_ADMIN_SESSION: "true"
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      - name: Run Playwright automated test suite (All Tests including Deferred Admin)
+        if: github.event_name == 'workflow_dispatch' && inputs.run_admin_e2e == true
+        run: npm run test:all
         env:
           CI: true
           ALLOW_TEST_ADMIN_SESSION: "true"

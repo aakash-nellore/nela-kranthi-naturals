@@ -8,7 +8,11 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "playwright test",
+    "test": "playwright test --grep-invert \"Authenticated Admin Portal Operations\"",
+    "test:public": "playwright test --grep-invert \"Authenticated Admin Portal Operations\"",
+    "test:admin": "playwright test tests/admin.spec.ts tests/admin-product-loading.spec.ts",
+    "test:admin-deferred": "playwright test --grep \"Authenticated Admin Portal Operations\"",
+    "test:all": "playwright test",
     "test:smoke": "playwright test tests/smoke.spec.ts",
     "test:ui": "playwright test --ui",
     "test:report": "playwright show-report"

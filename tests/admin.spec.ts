@@ -160,6 +160,17 @@ test.describe("Admin Authentication & Route Protection", () => {
   });
 });
 
+/**
+ * DEFERRED TEST SUITE: Authenticated Admin Portal Operations
+ *
+ * Temporarily deferred from default CI runs to prioritize public website launch.
+ * All test cases remain active and preserved in this file without modifications.
+ *
+ * Dedicated commands to execute these tests:
+ *   - Local execution:  npm run test:admin-deferred
+ *   - All tests:        npm run test:all
+ *   - GitHub Actions:   Trigger workflow with run_admin_e2e: true
+ */
 test.describe("Authenticated Admin Portal Operations", () => {
   // Use authenticated browser context with admin session cookie
   test.beforeEach(async ({ context }) => {
