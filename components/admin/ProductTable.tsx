@@ -27,7 +27,9 @@ export default function ProductTable({
 }: ProductTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<ProductCategory | "All">("All");
-  const [statusFilter, setStatusFilter] = useState<"All" | "Active" | "Inactive">("All");
+  const [statusFilter, setStatusFilter] = useState<
+    "All" | "Active" | "Inactive" | "EnquiryOnly"
+  >("All");
 
   const filteredProducts = useMemo(() => {
     return products.filter((item) => {
@@ -38,7 +40,8 @@ export default function ProductTable({
         selectedCategory === "All" || item.category === selectedCategory;
       const matchesStatus =
         statusFilter === "All" ||
-        (statusFilter === "Active" && item.available) ||
+        (statusFilter === "Active" && item.available && !item.isComplianceRestricted) ||
+        (statusFilter === "EnquiryOnly" && item.isComplianceRestricted) ||
         (statusFilter === "Inactive" && !item.available);
       return matchesSearch && matchesCategory && matchesStatus;
     });
@@ -111,14 +114,17 @@ export default function ProductTable({
             <select
               value={statusFilter}
               onChange={(e) =>
-                setStatusFilter(e.target.value as "All" | "Active" | "Inactive")
+                setStatusFilter(
+                  e.target.value as "All" | "Active" | "Inactive" | "EnquiryOnly"
+                )
               }
               aria-label="Filter by publication status"
               className="px-3.5 py-2 rounded-full border border-[#ded5c5] bg-white text-base sm:text-sm text-[#1b4332] focus:border-[#2d6a4f] focus:outline-hidden focus:ring-2 focus:ring-[#2d6a4f]/20 transition-all"
             >
               <option value="All">All Statuses</option>
-              <option value="Active">Active / Published</option>
-              <option value="Inactive">Inactive / Draft</option>
+              <option value="Active">Active Catalogue</option>
+              <option value="EnquiryOnly">Enquiry Only (Compliance)</option>
+              <option value="Inactive">Inactive / Hidden</option>
             </select>
 
             {(searchQuery || selectedCategory !== "All" || statusFilter !== "All") && (
@@ -244,7 +250,12 @@ export default function ProductTable({
 
                   {/* Status */}
                   <td className="py-4 px-6 whitespace-nowrap">
-                    {product.available ? (
+                    {product.isComplianceRestricted ? (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-300 text-xs font-semibold">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                        Enquiry Only
+                      </span>
+                    ) : product.available ? (
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
                         Active

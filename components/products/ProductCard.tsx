@@ -58,7 +58,12 @@ export default function ProductCard({ product }: ProductCardProps) {
               {product.category}
             </span>
 
-            {product.available ? (
+            {product.isComplianceRestricted ? (
+              <span className="text-[11px] font-semibold text-amber-950 bg-amber-100/70 border border-amber-300/80 px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-600" />
+                Enquiry Only
+              </span>
+            ) : product.available ? (
               <span className="text-[11px] font-medium text-emerald-800 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
                 In Stock
@@ -90,7 +95,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="mt-5 pt-4 border-t border-[#f0eae0] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex flex-col">
             <span className="text-[11px] font-medium text-[#7d6c56] uppercase tracking-wider">
-              Available Units
+              {product.isComplianceRestricted ? "Inquiry Scope" : "Available Units"}
             </span>
             <span className="text-xs font-semibold text-[#1b4332]">
               {product.unit}
@@ -102,7 +107,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-3 sm:py-2 min-h-[44px] sm:min-h-0 rounded-xl bg-[#2d6a4f] text-[#fcfaf6] text-sm sm:text-xs font-semibold hover:bg-[#1b4332] transition-colors shadow-2xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d6a4f]"
             aria-label={`View details for ${product.name}`}
           >
-            <span>View Product</span>
+            <span>{product.isComplianceRestricted ? "Enquire Details" : "View Product"}</span>
             <svg
               className="w-3.5 h-3.5"
               fill="none"

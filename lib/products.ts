@@ -3,6 +3,7 @@ import path from "path";
 import { supabase } from "@/lib/supabase";
 import { Product, ProductCategory } from "@/types";
 import { products as fallbackProducts, CATEGORIES } from "@/data/products";
+import { isComplianceRestricted } from "@/lib/compliance";
 
 export { CATEGORIES };
 
@@ -99,17 +100,12 @@ export function mapSupabaseRowToProduct(row: SupabaseProductRow): Product {
 
   const rawImage = row.image_url || localMatch?.image || "";
 
-  // Normalize packaging unit:
-  // If row.unit is empty, null, or mistakenly set to "Powder" (the product form instead of pack size),
-  // fallback to the proper package weight (e.g. "100g / 250g / 500g").
+  // Preserve confirmed packaging unit from database record.
+  // Do not replace existing database values with assumed sizes.
   const rawUnit = row.unit?.trim();
-  const isInvalidUnit =
-    !rawUnit ||
-    rawUnit.toLowerCase() === "powder" ||
-    rawUnit.toLowerCase() === "powders";
-  const resolvedUnit = isInvalidUnit
-    ? localMatch?.unit || "100g / 250g / 500g"
-    : rawUnit;
+  const resolvedUnit = rawUnit || localMatch?.unit || "";
+
+  const isRestricted = isComplianceRestricted(row.slug);
 
   return {
     id: row.id,
@@ -125,12 +121,19 @@ export function mapSupabaseRowToProduct(row: SupabaseProductRow): Product {
     image: resolveProductImage(rawImage),
     unit: resolvedUnit,
     available: row.is_active,
+    isComplianceRestricted: isRestricted,
+    complianceStatus: isRestricted ? "under_review" : "approved",
   };
 }
 
 /**
  * Fetches all active products from Supabase.
- * If Supabase is unavailable, errors, or returns no records, falls back gracefully to local product data.
+ *
+ * SINGLE SOURCE OF TRUTH INVARIANT:
+ * When Supabase is configured and reachable, public.products (with is_active = true)
+ * is the sole authority for product visibility. Local fallback products are strictly
+ * isolated to offline/emergency fallback when Supabase is completely unavailable.
+ * Inactive database records (is_active = false) are never overridden by local fallbacks.
  */
 export async function getAllProducts(): Promise<Product[]> {
   if (supabase) {
@@ -143,15 +146,19 @@ export async function getAllProducts(): Promise<Product[]> {
 
       if (error) {
         console.error("Supabase error fetching products:", error.message);
-      } else if (data && data.length > 0) {
+        return fallbackProducts.filter((p) => p.available);
+      }
+
+      if (data) {
         return (data as SupabaseProductRow[]).map(mapSupabaseRowToProduct);
       }
     } catch (err) {
       console.error("Unexpected error reading products from Supabase:", err);
+      return fallbackProducts.filter((p) => p.available);
     }
   }
 
-  // Graceful fallback to local products if Supabase returned 0 rows or is offline
+  // Offline / local build fallback without Supabase connection
   return fallbackProducts.filter((p) => p.available);
 }
 
@@ -363,15 +370,29 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 
       if (error) {
         console.error(`Supabase error fetching product "${normalizedSlug}":`, error.message);
-      } else if (data) {
+        // Supabase query failed; fall back to local data
+        const localMatch = fallbackProducts.find(
+          (p) => p.slug.toLowerCase() === normalizedSlug && p.available
+        );
+        return localMatch || null;
+      }
+
+      // Supabase is authoritative: if data is null, the product either does not exist
+      // or is marked inactive (is_active = false) in the database. Return null (404).
+      if (data) {
         return mapSupabaseRowToProduct(data as SupabaseProductRow);
       }
+      return null;
     } catch (err) {
       console.error(`Unexpected error fetching product "${normalizedSlug}" from Supabase:`, err);
+      const localMatch = fallbackProducts.find(
+        (p) => p.slug.toLowerCase() === normalizedSlug && p.available
+      );
+      return localMatch || null;
     }
   }
 
-  // Graceful fallback to local products
+  // Offline / local build fallback without Supabase connection
   const localMatch = fallbackProducts.find(
     (p) => p.slug.toLowerCase() === normalizedSlug && p.available
   );

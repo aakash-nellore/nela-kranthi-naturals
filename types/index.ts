@@ -16,4 +16,6 @@ export interface Product {
   image: string;
   unit: string;
   available: boolean;
+  isComplianceRestricted?: boolean;
+  complianceStatus?: "approved" | "under_review";
 }

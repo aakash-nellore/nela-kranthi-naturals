@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Product, ProductCategory } from "@/types";
 import { saveProductAction, uploadProductImageAction } from "@/lib/product-actions";
+import { isComplianceRestricted } from "@/lib/compliance";
 
 interface ProductModalProps {
   isOpen: boolean;
@@ -228,6 +229,34 @@ function ProductFormContent({ product, onClose, onSaved }: ProductFormContentPro
             </div>
           </div>
         </div>
+
+        {/* Regulatory & Compliance Botanical Notice */}
+        {(isComplianceRestricted(slug) || product?.isComplianceRestricted) && (
+          <div className="p-4 rounded-2xl bg-amber-100/60 border border-amber-300 text-amber-950 text-xs sm:text-sm">
+            <div className="flex items-start gap-2.5">
+              <svg
+                className="w-5 h-5 text-amber-800 shrink-0 mt-0.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                />
+              </svg>
+              <div>
+                <strong className="font-semibold text-amber-900">
+                  Regulatory Compliance Botanical:
+                </strong>{" "}
+                This item is published with factual botanical identity for commercial B2B enquiries only. The public page displays an{" "}
+                <em>Enquiry Only</em> badge with zero therapeutic, medicinal, or retail claims.
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Form Feedback */}
         {feedback && (

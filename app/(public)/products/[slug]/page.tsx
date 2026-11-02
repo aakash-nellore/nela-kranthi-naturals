@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllProducts, getProductBySlug } from "@/lib/products";
 import ProductImage from "@/components/products/ProductImage";
+import { getProductComplianceInfo } from "@/lib/compliance";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -50,6 +51,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
   if (!product) {
     notFound();
   }
+
+  const compliance = getProductComplianceInfo(product.slug, product.name);
 
   // Category badge color schemes matching the existing product catalogue
   const getBadgeStyle = (category: string) => {
@@ -101,7 +104,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 </span>
 
                 <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#e9f1ed] text-[#2d6a4f]">
-                  Sydapuram Unit
+                  Solar Dehydrated
                 </span>
               </div>
 
@@ -116,7 +119,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
               {/* Bottom Info Bar */}
               <div className="mt-6 pt-4 border-t border-[#f0eae0] flex items-center justify-between text-xs text-[#52796f]">
-                <span>Sydapuram, Nellore District</span>
+                <span>Natural Harvest</span>
                 <span className="font-semibold text-[#1b4332]">
                   Carefully Prepared
                 </span>
@@ -126,8 +129,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
           {/* Right Column: Product Core Details */}
           <div className="lg:col-span-6 flex flex-col items-start text-left">
-            {/* Small Category Badge */}
-            <div className="mb-3">
+            {/* Small Category Badge & Compliance Indicator */}
+            <div className="mb-3 flex items-center gap-2 flex-wrap">
               <span
                 className={`inline-block text-xs font-semibold px-3 py-1 rounded-full border ${getBadgeStyle(
                   product.category
@@ -135,12 +138,47 @@ export default async function ProductDetailPage({ params }: PageProps) {
               >
                 {product.category}
               </span>
+
+              {compliance.isRestricted && (
+                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-amber-100/80 text-amber-950 border border-amber-300">
+                  {compliance.statusLabel}
+                </span>
+              )}
             </div>
 
             {/* Main Product Heading */}
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1b4332] tracking-tight leading-tight">
               {product.name}
             </h1>
+
+            {/* Compliance Alert Box for Flagged Botanicals */}
+            {compliance.isRestricted && (
+              <div className="mt-4 w-full p-4 sm:p-5 rounded-2xl bg-amber-50/95 border border-amber-300 text-amber-950 shadow-2xs">
+                <div className="flex items-start gap-3">
+                  <svg
+                    className="w-5 h-5 text-amber-800 shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                    />
+                  </svg>
+                  <div>
+                    <h3 className="font-serif font-bold text-sm sm:text-base text-amber-950">
+                      {compliance.noticeHeading}
+                    </h3>
+                    <p className="mt-1 text-xs sm:text-sm text-amber-900/90 leading-relaxed">
+                      {compliance.noticeBody}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Short Description */}
             <p className="mt-4 text-base sm:text-lg text-[#3f4e46] leading-relaxed">
@@ -151,22 +189,29 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
               <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#e8dfd1] shadow-2xs">
                 <p className="text-xs font-semibold uppercase tracking-wider text-[#7d6c56]">
-                  Available Unit
+                  {compliance.isRestricted ? "Inquiry Specification" : "Available Unit"}
                 </p>
                 <p className="font-serif font-bold text-base sm:text-lg text-[#1b4332] mt-1">
                   {product.unit}
                 </p>
                 <p className="text-xs text-[#52796f] mt-0.5">
-                  Retail &amp; Bulk packing
+                  {compliance.isRestricted ? "Commercial & Formulation" : "Retail & Bulk packaging"}
                 </p>
               </div>
 
               <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#e8dfd1] shadow-2xs">
                 <p className="text-xs font-semibold uppercase tracking-wider text-[#7d6c56]">
-                  Availability
+                  Catalogue Status
                 </p>
                 <div className="mt-1 flex items-center gap-2">
-                  {product.available ? (
+                  {compliance.isRestricted ? (
+                    <>
+                      <span className="w-2 h-2 rounded-full bg-amber-500" />
+                      <span className="font-serif font-bold text-base sm:text-lg text-amber-950">
+                        {compliance.availabilityLabel}
+                      </span>
+                    </>
+                  ) : product.available ? (
                     <>
                       <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                       <span className="font-serif font-bold text-base sm:text-lg text-[#1b4332]">
@@ -177,13 +222,15 @@ export default async function ProductDetailPage({ params }: PageProps) {
                     <>
                       <span className="w-2 h-2 rounded-full bg-stone-400" />
                       <span className="font-serif font-bold text-base sm:text-lg text-stone-600">
-                        Not currently listed
+                        Seasonal
                       </span>
                     </>
                   )}
                 </div>
                 <p className="text-xs text-[#52796f] mt-0.5">
-                  Based on seasonal harvest
+                  {compliance.isRestricted
+                    ? compliance.availabilitySubtext
+                    : "Based on seasonal harvest"}
                 </p>
               </div>
             </div>
@@ -192,7 +239,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 w-full">
               <a
                 href={`https://wa.me/917207717966?text=${encodeURIComponent(
-                  `Hello, I would like to enquire about ${product.name}.`
+                  compliance.whatsappMessage
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -210,10 +257,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
               </a>
 
               <Link
-                href={`/contact?inquiry=${encodeURIComponent(product.name)}`}
+                href={`/contact?inquiry=${encodeURIComponent(product.name)}&type=${compliance.contactUrlParam}`}
                 className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#2d6a4f] text-[#fcfaf6] font-semibold text-sm sm:text-base hover:bg-[#1b4332] transition-all shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d6a4f]"
               >
-                <span>Send an Enquiry &rarr;</span>
+                <span>{compliance.isRestricted ? "Commercial Enquiry &rarr;" : "Send an Enquiry &rarr;"}</span>
               </Link>
             </div>
           </div>
@@ -265,7 +312,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
             <p className="mt-4 text-base sm:text-lg text-emerald-100/90 leading-relaxed">
               Share your requirement with us and we can discuss the product,
-              quantity and other details directly.
+              specifications, quantity and other details directly.
             </p>
 
             {/* CTAs */}
@@ -273,7 +320,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               {/* Primary WhatsApp CTA */}
               <a
                 href={`https://wa.me/917207717966?text=${encodeURIComponent(
-                  `Hello, I would like to enquire about ${product.name}.`
+                  compliance.whatsappMessage
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -291,7 +338,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
               {/* Secondary Send an Enquiry CTA */}
               <Link
-                href={`/contact?inquiry=${encodeURIComponent(product.name)}`}
+                href={`/contact?inquiry=${encodeURIComponent(product.name)}&type=${compliance.contactUrlParam}`}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#fcfaf6] text-[#1b4332] font-semibold text-sm sm:text-base hover:bg-white transition-all shadow-sm focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
               >
                 <span>Send an Enquiry &rarr;</span>

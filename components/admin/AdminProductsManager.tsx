@@ -51,6 +51,7 @@ export default function AdminProductsManager({
   const totalProducts = products.length;
   const activeProducts = products.filter((p) => p.available).length;
   const draftProducts = products.filter((p) => !p.available).length;
+  const complianceProducts = products.filter((p) => p.isComplianceRestricted).length;
   const uniqueCategories = new Set(products.map((p) => p.category)).size;
   const activePercent =
     totalProducts > 0
@@ -169,7 +170,11 @@ export default function AdminProductsManager({
               {totalProducts}
             </p>
             <span className="text-xs text-[#52796f] font-medium">
-              {draftProducts > 0 ? `${draftProducts} Drafts` : "All Published"}
+              {draftProducts > 0
+                ? `${draftProducts} Inactive`
+                : complianceProducts > 0
+                ? `${totalProducts - complianceProducts} Std + ${complianceProducts} Enquiry`
+                : "All Published"}
             </span>
           </div>
           <p className="mt-1 text-[11px] text-[#7d6c56]">
