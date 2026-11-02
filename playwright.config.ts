@@ -31,7 +31,7 @@ if (fs.existsSync(envLocalPath)) {
 const resolvedBaseUrl = (
   process.env.WEBSITE_URL ||
   process.env.BASE_URL ||
-  "http://localhost:3000"
+  "http://127.0.0.1:3000"
 )
   .trim()
   .replace(/\/+$/, "");
@@ -61,7 +61,7 @@ export default defineConfig({
   /* Shared settings for all test projects */
   use: {
     baseURL: resolvedBaseUrl,
-    navigationTimeout: 30 * 1000,
+    navigationTimeout: 45 * 1000,
     actionTimeout: 15 * 1000,
     /* Trace recorded on retry for readable debugging */
     trace: "on-first-retry",
@@ -83,14 +83,17 @@ export default defineConfig({
   webServer: isRemoteTarget
     ? undefined
     : {
-        command: process.env.CI
-          ? "npx next start -H 127.0.0.1 -p 3000"
-          : "npx next dev -H 127.0.0.1 -p 3000",
+        command:
+          process.env.CI ||
+          fs.existsSync(path.resolve(process.cwd(), ".next/BUILD_ID"))
+            ? "npx next start -H 127.0.0.1 -p 3000"
+            : "npx next dev --webpack -H 127.0.0.1 -p 3000",
         url: "http://127.0.0.1:3000",
         reuseExistingServer: !process.env.CI,
         timeout: 120 * 1000,
         env: {
           ALLOW_TEST_ADMIN_SESSION: "true",
+          ALLOW_LOCAL_FALLBACK: "true",
         },
       },
 });

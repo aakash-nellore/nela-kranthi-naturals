@@ -2,8 +2,9 @@ import type { MetadataRoute } from "next";
 import { getAllProducts } from "@/lib/products";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://nelakranthinaturals.com";
+  const baseUrl = (
+    process.env.NEXT_PUBLIC_SITE_URL || "https://nelakranthinaturals.com"
+  ).replace(/\/$/, "");
   const now = new Date();
 
   // Core public static pages

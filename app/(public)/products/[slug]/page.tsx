@@ -4,6 +4,12 @@ import { notFound } from "next/navigation";
 import { getAllProducts, getProductBySlug } from "@/lib/products";
 import ProductImage from "@/components/products/ProductImage";
 import { getProductComplianceInfo } from "@/lib/compliance";
+import { SITE_CONTACT } from "@/lib/constants";
+import {
+  getProductSeoData,
+  buildProductJsonLd,
+  buildProductBreadcrumbJsonLd,
+} from "@/lib/seo";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -29,18 +35,54 @@ export async function generateMetadata({
     return {
       title: "Product Not Found",
       description: "The requested natural food product could not be found.",
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
+  const baseUrl = (
+    process.env.NEXT_PUBLIC_SITE_URL || SITE_CONTACT.siteUrl
+  ).replace(/\/$/, "");
+  const seoData = getProductSeoData(
+    product.slug,
+    product.name,
+    product.shortDescription
+  );
+  const canonicalUrl = `${baseUrl}/products/${product.slug}`;
+
+  const ogImages =
+    product.image && product.image.startsWith("http")
+      ? [{ url: product.image, alt: `${product.name} - ${SITE_CONTACT.brandName}` }]
+      : [{ url: `${baseUrl}/icon.png`, alt: `${product.name} - ${SITE_CONTACT.brandName}` }];
+
   return {
-    title: product.name,
-    description: product.shortDescription,
-    openGraph: {
-      title: `${product.name} | Nela Kranthi Naturals`,
-      description: product.shortDescription,
-      url: `/products/${product.slug}`,
-      type: "website",
+    title: {
+      absolute: seoData.seoTitle,
     },
+    description: seoData.metaDescription,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: seoData.seoTitle,
+      description: seoData.metaDescription,
+      url: canonicalUrl,
+      type: "website",
+      images: ogImages,
+      siteName: SITE_CONTACT.brandName,
+      locale: "en_IN",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: seoData.seoTitle,
+      description: seoData.metaDescription,
+      images: ogImages.map((img) => img.url),
+    },
+    robots: product.isComplianceRestricted
+      ? { index: false, follow: false }
+      : { index: true, follow: true },
   };
 }
 
@@ -53,6 +95,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
   }
 
   const compliance = getProductComplianceInfo(product.slug, product.name);
+  const productJsonLd = buildProductJsonLd(product);
+  const breadcrumbJsonLd = buildProductBreadcrumbJsonLd(product);
 
   // Category badge color schemes matching the existing product catalogue
   const getBadgeStyle = (category: string) => {
@@ -76,17 +120,48 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-[#fcfaf6] py-10 sm:py-14 lg:py-16">
+      {/* Schema.org Product Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(productJsonLd),
+        }}
+      />
+      {/* Schema.org BreadcrumbList Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd),
+        }}
+      />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Navigation Breadcrumb / Back Link */}
-        <div className="mb-8">
-          <Link
-            href="/products"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#2d6a4f] hover:text-[#1b4332] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d6a4f] rounded-sm"
-          >
-            <span aria-hidden="true">&larr;</span>
-            <span>Back to Products</span>
-          </Link>
-        </div>
+        {/* Navigation Breadcrumb */}
+        <nav aria-label="Breadcrumb" className="mb-8">
+          <ol className="flex items-center flex-wrap gap-2 text-xs sm:text-sm text-[#52796f]">
+            <li>
+              <Link
+                href="/"
+                className="hover:text-[#1b4332] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d6a4f] rounded-sm"
+              >
+                Home
+              </Link>
+            </li>
+            <li aria-hidden="true" className="text-[#a0b5ab]">/</li>
+            <li>
+              <Link
+                href="/products"
+                className="hover:text-[#1b4332] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d6a4f] rounded-sm"
+              >
+                Products
+              </Link>
+            </li>
+            <li aria-hidden="true" className="text-[#a0b5ab]">/</li>
+            <li aria-current="page" className="font-semibold text-[#1b4332] truncate max-w-[200px] sm:max-w-none">
+              {product.name}
+            </li>
+          </ol>
+        </nav>
 
         {/* Product Hero: Two-column layout on Desktop, stacked on mobile/tablet */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">

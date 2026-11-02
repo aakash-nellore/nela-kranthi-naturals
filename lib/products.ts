@@ -127,13 +127,39 @@ export function mapSupabaseRowToProduct(row: SupabaseProductRow): Product {
 }
 
 /**
+ * Determines whether local fallback data is permitted.
+ *
+ * PRODUCTION SAFETY INVARIANT:
+ * Local fallback data is strictly forbidden in production and Vercel environments.
+ * Supabase is the sole authoritative source for product publication status.
+ * Permitted only when explicitly configured for isolated local test/dev environments.
+ */
+export function isLocalFallbackPermitted(): boolean {
+  if (process.env.VERCEL || process.env.VERCEL_ENV) {
+    return false;
+  }
+  if (
+    process.env.NODE_ENV === "production" &&
+    process.env.ALLOW_LOCAL_FALLBACK !== "true"
+  ) {
+    return false;
+  }
+  return (
+    process.env.NODE_ENV === "development" ||
+    process.env.NODE_ENV === "test" ||
+    process.env.ALLOW_LOCAL_FALLBACK === "true"
+  );
+}
+
+/**
  * Fetches all active products from Supabase.
  *
  * SINGLE SOURCE OF TRUTH INVARIANT:
- * When Supabase is configured and reachable, public.products (with is_active = true)
- * is the sole authority for product visibility. Local fallback products are strictly
- * isolated to offline/emergency fallback when Supabase is completely unavailable.
- * Inactive database records (is_active = false) are never overridden by local fallbacks.
+ * In production, Supabase public.products (with is_active = true) is the exclusive
+ * authority for product visibility. Local fallback products are never substituted in
+ * production when Supabase is unavailable. Infrastructure errors fail safely with
+ * a temporary error rather than misrepresenting products as unverified or published.
+ * Regulatory review items are strictly excluded from the public catalogue.
  */
 export async function getAllProducts(): Promise<Product[]> {
   if (supabase) {
@@ -146,20 +172,45 @@ export async function getAllProducts(): Promise<Product[]> {
 
       if (error) {
         console.error("Supabase error fetching products:", error.message);
-        return fallbackProducts.filter((p) => p.available);
+        if (!isLocalFallbackPermitted()) {
+          throw new Error(
+            `Database error: Failed to fetch product catalogue from Supabase (${error.message}).`
+          );
+        }
+        return fallbackProducts.filter(
+          (p) => p.available && !isComplianceRestricted(p.slug)
+        );
       }
 
       if (data) {
-        return (data as SupabaseProductRow[]).map(mapSupabaseRowToProduct);
+        return (data as SupabaseProductRow[])
+          .filter((row) => row.is_active && !isComplianceRestricted(row.slug))
+          .map(mapSupabaseRowToProduct);
       }
     } catch (err) {
       console.error("Unexpected error reading products from Supabase:", err);
-      return fallbackProducts.filter((p) => p.available);
+      if (!isLocalFallbackPermitted()) {
+        throw err instanceof Error
+          ? err
+          : new Error("Database error: Product catalogue is temporarily unavailable.");
+      }
+      return fallbackProducts.filter(
+        (p) => p.available && !isComplianceRestricted(p.slug)
+      );
     }
   }
 
-  // Offline / local build fallback without Supabase connection
-  return fallbackProducts.filter((p) => p.available);
+  // If Supabase client is not configured in production, fail closed
+  if (!isLocalFallbackPermitted()) {
+    throw new Error(
+      "Configuration error: Supabase client is not configured in production. Cannot verify product publication status."
+    );
+  }
+
+  // Explicit development/test-only fallback
+  return fallbackProducts.filter(
+    (p) => p.available && !isComplianceRestricted(p.slug)
+  );
 }
 
 export interface AdminProductsResult {
@@ -348,6 +399,10 @@ export async function getAllAdminProducts(
 /**
  * Fetches a single active product by its unique slug.
  * Returns null if not found.
+ *
+ * SAFETY INVARIANT:
+ * Regulatory review items are strictly excluded from the public catalogue and
+ * return null immediately. Supabase remains the authoritative source of truth.
  */
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   if (!slug) return null;
@@ -357,6 +412,11 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     normalizedSlug = decodeURIComponent(slug).trim().toLowerCase();
   } catch {
     // Keep trimmed slug if decode fails
+  }
+
+  // Strictly exclude regulatory review products from public catalogue
+  if (isComplianceRestricted(normalizedSlug)) {
+    return null;
   }
 
   if (supabase) {
@@ -370,9 +430,16 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 
       if (error) {
         console.error(`Supabase error fetching product "${normalizedSlug}":`, error.message);
-        // Supabase query failed; fall back to local data
+        if (!isLocalFallbackPermitted()) {
+          throw new Error(
+            `Database error: Failed to fetch product "${normalizedSlug}" from Supabase (${error.message}).`
+          );
+        }
         const localMatch = fallbackProducts.find(
-          (p) => p.slug.toLowerCase() === normalizedSlug && p.available
+          (p) =>
+            p.slug.toLowerCase() === normalizedSlug &&
+            p.available &&
+            !isComplianceRestricted(p.slug)
         );
         return localMatch || null;
       }
@@ -385,16 +452,34 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       return null;
     } catch (err) {
       console.error(`Unexpected error fetching product "${normalizedSlug}" from Supabase:`, err);
+      if (!isLocalFallbackPermitted()) {
+        throw err instanceof Error
+          ? err
+          : new Error(`Database error: Product "${normalizedSlug}" is temporarily unavailable.`);
+      }
       const localMatch = fallbackProducts.find(
-        (p) => p.slug.toLowerCase() === normalizedSlug && p.available
+        (p) =>
+          p.slug.toLowerCase() === normalizedSlug &&
+          p.available &&
+          !isComplianceRestricted(p.slug)
       );
       return localMatch || null;
     }
   }
 
-  // Offline / local build fallback without Supabase connection
+  // If Supabase client is not configured in production, fail closed
+  if (!isLocalFallbackPermitted()) {
+    throw new Error(
+      "Configuration error: Supabase client is not configured in production. Cannot verify product publication status."
+    );
+  }
+
+  // Development/test-only fallback
   const localMatch = fallbackProducts.find(
-    (p) => p.slug.toLowerCase() === normalizedSlug && p.available
+    (p) =>
+      p.slug.toLowerCase() === normalizedSlug &&
+      p.available &&
+      !isComplianceRestricted(p.slug)
   );
   return localMatch || null;
 }

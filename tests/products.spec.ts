@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { isLocalFallbackPermitted } from "../lib/products";
 
 test.describe("Products Catalogue & Detail Pages", () => {
   test("product catalogue renders active products and category filter works", async ({
@@ -207,26 +208,25 @@ test.describe("Products Catalogue & Detail Pages", () => {
     expect(await productCards.count()).toBeGreaterThanOrEqual(8);
   });
 
-  test("database isolation: inactive draft products return 404 until published in Supabase", async ({
+  test("database isolation: inactive regulatory review products strictly return 404", async ({
     page,
   }) => {
-    // Check if the database has published the expansion items or if they remain unpublished
-    const testSlug = "neem-leaf-powder";
-    const response = await page.goto(`/products/${testSlug}`, {
-      waitUntil: "domcontentloaded",
-    });
+    const inactiveSlugs = [
+      "papaya-leaf-powder",
+      "jamun-leaf-powder",
+      "neem-leaf-powder",
+      "marigold-petals-dried",
+      "safed-musli-root-powder",
+    ];
 
-    if (response?.status() === 200) {
-      // Post-migration: verify compliance presentation
-      await expect(
-        page.getByText(/Regulatory & Commercial Enquiry Notice/i)
-      ).toBeVisible();
-      await expect(
-        page.getByText(/Commercial Enquiry Only/i).first()
-      ).toBeVisible();
-    } else {
-      // Pre-migration: confirm Supabase is_active = false is strictly respected and returns 404
-      expect(response?.status()).toBe(404);
+    for (const testSlug of inactiveSlugs) {
+      const response = await page.goto(`/products/${testSlug}`, {
+        waitUntil: "domcontentloaded",
+      });
+      expect(
+        response?.status(),
+        `Expected inactive product /products/${testSlug} to return HTTP 404`
+      ).toBe(404);
     }
   });
 
@@ -276,5 +276,34 @@ test.describe("Products Catalogue & Detail Pages", () => {
 
     // Verify non-existent slug is NOT in sitemap
     expect(xml).not.toContain("/products/non-existent-slug");
+  });
+
+  test("production safety: local fallback is strictly prohibited in production and Vercel environments", async () => {
+    // Simulating Vercel environment
+    const originalVercel = process.env.VERCEL;
+    try {
+      process.env.VERCEL = "1";
+      expect(isLocalFallbackPermitted()).toBe(false);
+    } finally {
+      if (originalVercel === undefined) {
+        delete process.env.VERCEL;
+      } else {
+        process.env.VERCEL = originalVercel;
+      }
+    }
+
+    // Simulating Production environment without explicit opt-in
+    const originalNodeEnv = process.env.NODE_ENV;
+    const originalAllow = process.env.ALLOW_LOCAL_FALLBACK;
+    try {
+      (process.env as Record<string, string>).NODE_ENV = "production";
+      delete process.env.ALLOW_LOCAL_FALLBACK;
+      expect(isLocalFallbackPermitted()).toBe(false);
+    } finally {
+      (process.env as Record<string, string>).NODE_ENV = originalNodeEnv || "";
+      if (originalAllow !== undefined) {
+        process.env.ALLOW_LOCAL_FALLBACK = originalAllow;
+      }
+    }
   });
 });

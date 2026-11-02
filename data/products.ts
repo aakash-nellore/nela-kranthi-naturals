@@ -146,7 +146,7 @@ export const products: Product[] = [
       "Botanical powder prepared from the leaves of the Carica papaya plant. Distinct from ripe papaya fruit powder. Offered for technical specification review, commercial inquiry, and formulation research. No therapeutic or medicinal claims are made.",
     image: "",
     unit: "100g / 250g / 500g",
-    available: true,
+    available: false,
     isComplianceRestricted: true,
     complianceStatus: "under_review",
   },
@@ -161,7 +161,7 @@ export const products: Product[] = [
       "Botanical powder prepared from the foliage of the Java plum tree (Syzygium cumini). Distinct from jamun fruit or seed products. Catalogued for technical specification review and commercial inquiry. No medicinal or therapeutic claims are made.",
     image: "",
     unit: "100g / 250g / 500g",
-    available: true,
+    available: false,
     isComplianceRestricted: true,
     complianceStatus: "under_review",
   },
@@ -176,7 +176,7 @@ export const products: Product[] = [
       "Botanical powder prepared from the leaves of the Indian neem tree (Azadirachta indica). Intended for technical review, topical formulation, and commercial inquiry. Not offered for retail food consumption. Zero therapeutic claims are made.",
     image: "",
     unit: "100g / 250g / 500g",
-    available: true,
+    available: false,
     isComplianceRestricted: true,
     complianceStatus: "under_review",
   },
@@ -234,7 +234,7 @@ export const products: Product[] = [
       "Whole dried flower petals of marigold (Tagetes). These are whole dried petals, not a powder. Catalogued for technical specification review, natural color extraction, and commercial inquiry. No medical claims are made.",
     image: "",
     unit: "100g / 250g / 500g",
-    available: true,
+    available: false,
     isComplianceRestricted: true,
     complianceStatus: "under_review",
   },
@@ -443,7 +443,7 @@ export const products: Product[] = [
       "Botanical powder prepared from the roots of Chlorophytum borivilianum. Specialty traditional botanical, distinct from general food spices. Offered strictly for technical specification review and commercial inquiry. No therapeutic or health claims are made.",
     image: "",
     unit: "100g / 250g / 500g",
-    available: true,
+    available: false,
     isComplianceRestricted: true,
     complianceStatus: "under_review",
   },
@@ -453,7 +453,7 @@ export const products: Product[] = [
  * Helper to fetch all available products
  */
 export function getAllProducts(): Product[] {
-  return products;
+  return products.filter((p) => p.available && !p.isComplianceRestricted);
 }
 
 /**
