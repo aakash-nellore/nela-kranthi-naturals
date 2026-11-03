@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { getProductImageAlt } from "@/lib/seo";
 
 interface ProductImageProps {
   src?: string | null;
@@ -24,8 +25,7 @@ export default function ProductImage({
   const cleanSrc = typeof src === "string" && src.trim().length > 0 ? src.trim() : null;
 
   // Alt text based on product name
-  const imageAlt =
-    alt || `${productName} - Solar-Dehydrated Natural Food Product by Nela Kranthi Naturals`;
+  const imageAlt = alt || getProductImageAlt({ name: productName });
 
   // If a valid image URL is provided and has not failed loading, render Next.js Image
   if (cleanSrc && !hasError) {

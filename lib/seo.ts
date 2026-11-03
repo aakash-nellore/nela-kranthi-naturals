@@ -24,6 +24,7 @@ export interface ProductSeoEntry {
   seoTitle: string;
   metaDescription: string;
   searchIntent: string;
+  imageAlt?: string;
   isRestricted?: boolean;
 }
 
@@ -63,6 +64,7 @@ export const PRODUCT_SEO_REGISTRY: Record<string, ProductSeoEntry> = {
     metaDescription:
       "Pure green banana powder prepared from mature green bananas using solar dehydration. Zero additives or added sugars. Ideal for porridge, baking, and smoothies.",
     searchIntent: "Culinary & Dietary",
+    imageAlt: "Fine raw green banana powder in a wooden bowl with sliced bananas",
   },
   "dragon-fruit-powder": {
     slug: "dragon-fruit-powder",
@@ -85,6 +87,7 @@ export const PRODUCT_SEO_REGISTRY: Record<string, ProductSeoEntry> = {
     metaDescription:
       "Zesty whole lemon powder made from dehydrated rind and pulp. High natural acidity with no artificial flavouring. Excellent for drinks, baking, rubs, and teas.",
     searchIntent: "Culinary & Beverage",
+    imageAlt: "Fine dehydrated whole lemon powder in a bowl with fresh yellow lemons",
   },
   "mango-powder": {
     slug: "mango-powder",
@@ -96,6 +99,7 @@ export const PRODUCT_SEO_REGISTRY: Record<string, ProductSeoEntry> = {
     metaDescription:
       "Pure solar-dehydrated mango powder bursting with authentic sweet-tangy flavor. Zero artificial flavors or added sugar. Ideal for drinks, desserts, and curries.",
     searchIntent: "Culinary & Confectionery",
+    imageAlt: "Golden solar-dehydrated mango powder in a bowl with fresh mango fruit slices",
   },
   "orange-powder": {
     slug: "orange-powder",
@@ -118,6 +122,7 @@ export const PRODUCT_SEO_REGISTRY: Record<string, ProductSeoEntry> = {
     metaDescription:
       "Solar-dehydrated ripe papaya fruit powder retaining natural sweetness. Pure fruit with zero additives. Ideal for smoothie blends, seasonings, and desserts.",
     searchIntent: "Culinary & Beverage",
+    imageAlt: "Solar-dehydrated papaya fruit powder in a bowl with fresh papaya slices",
   },
   "pineapple-powder": {
     slug: "pineapple-powder",
@@ -129,6 +134,7 @@ export const PRODUCT_SEO_REGISTRY: Record<string, ProductSeoEntry> = {
     metaDescription:
       "Tangy-sweet solar-dehydrated pineapple powder with zero added sugar or anti-caking chemicals. Ideal for tropical beverages, baking mixes, marinades, and glazes.",
     searchIntent: "Culinary & Beverage",
+    imageAlt: "Golden solar-dehydrated pineapple fruit powder with dried pineapple pieces",
   },
 
   // --------------------------------------------------------------------------
@@ -144,6 +150,7 @@ export const PRODUCT_SEO_REGISTRY: Record<string, ProductSeoEntry> = {
     metaDescription:
       "Aromatic solar-dehydrated curry leaf powder retaining authentic aroma. Pure and chemical-free. Ideal for spiced rice, traditional podis, and daily seasoning.",
     searchIntent: "Culinary & Spice Seasoning",
+    imageAlt: "Dehydrated green curry leaf powder in a bowl with fresh curry leaves",
   },
   "gongura-leaf-powder": {
     slug: "gongura-leaf-powder",
@@ -188,6 +195,7 @@ export const PRODUCT_SEO_REGISTRY: Record<string, ProductSeoEntry> = {
     metaDescription:
       "Nutrient-rich solar-dehydrated moringa leaf powder. Gently processed, finely ground, and 100% pure. Perfect for daily dietary smoothies, herbal teas, and soups.",
     searchIntent: "Dietary Wellness & Botanical",
+    imageAlt: "Pure solar-dehydrated moringa leaf powder on a rustic wooden surface",
   },
 
   // --------------------------------------------------------------------------
@@ -284,6 +292,7 @@ export const PRODUCT_SEO_REGISTRY: Record<string, ProductSeoEntry> = {
     metaDescription:
       "Pure dehydrated okra (ladyfinger/bhendi) powder retaining natural dietary fiber and texture. Chemical-free vegetable powder for cooking, soups, and thickeners.",
     searchIntent: "Culinary & Thickening Agent",
+    imageAlt: "Solar-dehydrated okra powder in a bowl alongside fresh ladyfinger slices",
   },
   "onion-powder": {
     slug: "onion-powder",
@@ -435,6 +444,60 @@ export function getProductSeoData(
     searchIntent: "Culinary & Dietary",
     isRestricted: isComplianceRestricted(normalizedSlug),
   };
+}
+
+/**
+ * Resolves accurate, accessible, and SEO-friendly image alt text for a product.
+ *
+ * Rules:
+ * 1. If an explicit verified image description exists in the SEO registry, return it.
+ * 2. If no verified image description is registered, construct a non-repetitive, category-aware description:
+ *    - Flower & Petal items (e.g. dried petals): "${product.name} - Solar-Dried Botanical Petals"
+ *    - Items with "powder" already in the name: "${product.name} - Natural Solar Dehydrated"
+ *    - Flakes or dehydrated culinary food forms: "${product.name} - Natural Solar-Dehydrated Food"
+ *    - General items: "${product.name} - Solar-Dehydrated Natural Food"
+ * 3. Eliminates repetitive patterns like "Banana Powder - Solar Dehydrated Powder".
+ * 4. Strictly avoids unverified medical, therapeutic, organic, or chemical claims.
+ */
+export function getProductImageAlt(product: {
+  slug?: string;
+  name: string;
+  category?: string;
+}): string {
+  const normalizedSlug = product.slug?.toLowerCase().trim();
+
+  // 1. Check verified photography registry
+  if (normalizedSlug && PRODUCT_SEO_REGISTRY[normalizedSlug]?.imageAlt) {
+    return PRODUCT_SEO_REGISTRY[normalizedSlug].imageAlt!;
+  }
+
+  const name = product.name.trim();
+  const lowerName = name.toLowerCase();
+  const category =
+    product.category ||
+    (normalizedSlug ? PRODUCT_SEO_REGISTRY[normalizedSlug]?.category : "");
+
+  // 2. Category-aware handling for flower & petal products (dried petals, whole petals)
+  if (
+    category === "Flower & Petal Products" ||
+    lowerName.includes("petal") ||
+    lowerName.includes("flower")
+  ) {
+    return `${name} - Solar-Dried Botanical Petals`;
+  }
+
+  // 3. Dehydrated food flakes or non-powder culinary forms
+  if (lowerName.includes("flakes") || category === "Dehydrated Foods") {
+    return `${name} - Natural Solar-Dehydrated Food`;
+  }
+
+  // 4. Products already containing "powder" in name (avoid repetitive "Powder ... Powder")
+  if (lowerName.includes("powder")) {
+    return `${name} - Natural Solar Dehydrated`;
+  }
+
+  // 5. Default natural food fallback
+  return `${name} - Solar-Dehydrated Natural Food`;
 }
 
 /**

@@ -7,6 +7,7 @@ import { getProductComplianceInfo } from "@/lib/compliance";
 import { SITE_CONTACT } from "@/lib/constants";
 import {
   getProductSeoData,
+  getProductImageAlt,
   buildProductJsonLd,
   buildProductBreadcrumbJsonLd,
 } from "@/lib/seo";
@@ -52,10 +53,14 @@ export async function generateMetadata({
   );
   const canonicalUrl = `${baseUrl}/products/${product.slug}`;
 
-  const ogImages =
-    product.image && product.image.startsWith("http")
-      ? [{ url: product.image, alt: `${product.name} - ${SITE_CONTACT.brandName}` }]
-      : [{ url: `${baseUrl}/icon.png`, alt: `${product.name} - ${SITE_CONTACT.brandName}` }];
+  const hasValidRemoteImage =
+    typeof product.image === "string" &&
+    product.image.trim().length > 0 &&
+    product.image.startsWith("http");
+
+  const ogImages: Array<{ url: string; alt: string }> = hasValidRemoteImage
+    ? [{ url: product.image, alt: getProductImageAlt(product) }]
+    : [{ url: `${baseUrl}/icon.png`, alt: `${product.name} - ${SITE_CONTACT.brandName}` }];
 
   return {
     title: {
@@ -78,7 +83,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: seoData.seoTitle,
       description: seoData.metaDescription,
-      images: ogImages.map((img) => img.url),
+      images: ogImages.map((img: { url: string; alt: string }) => img.url),
     },
     robots: product.isComplianceRestricted
       ? { index: false, follow: false }
@@ -186,7 +191,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               {/* Product Image with Real Photo Support & Fallback Placeholder */}
               <ProductImage
                 src={product.image}
-                alt={`${product.name} - Solar Dehydrated Powder`}
+                alt={getProductImageAlt(product)}
                 productName={product.name}
                 variant="detail"
                 priority

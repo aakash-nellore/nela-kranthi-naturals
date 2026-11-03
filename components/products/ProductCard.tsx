@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { Product } from "@/types";
 import ProductImage from "@/components/products/ProductImage";
+import { getProductImageAlt } from "@/lib/seo";
 
 interface ProductCardProps {
   product: Product;
@@ -39,7 +40,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       >
         <ProductImage
           src={product.image}
-          alt={`${product.name} - Solar Dehydrated Powder`}
+          alt={getProductImageAlt(product)}
           productName={product.name}
           variant="card"
         />

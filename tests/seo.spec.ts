@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { PRODUCT_SEO_REGISTRY, getProductSeoData } from "@/lib/seo";
+import { PRODUCT_SEO_REGISTRY, getProductSeoData, getProductImageAlt } from "@/lib/seo";
 import { COMPLIANCE_REVIEW_SLUGS } from "@/lib/compliance";
 
 const ACTIVE_PRODUCT_SAMPLES = [
@@ -303,8 +303,51 @@ test.describe("Product-First SEO & Structured Data Validation", () => {
       expect(items[0].name).toBe("Home");
       expect(items[1].name).toBe("Products");
       expect(items[2].name).toBe(sample.expectedName);
+
+      // 9. Product Image Alt Text Verification
+      // If an actual photo exists, verify alt text is descriptive, non-empty, and avoids repetitive patterns
+      const renderedImg = page.locator("main img");
+      if ((await renderedImg.count()) > 0) {
+        const altText = await renderedImg.first().getAttribute("alt");
+        expect(altText).toBeTruthy();
+        expect(altText).not.toContain("Powder - Solar Dehydrated Powder");
+        expect(altText?.length).toBeGreaterThanOrEqual(10);
+      }
     });
   }
+
+  test("getProductImageAlt generates verified, category-aware, and non-repetitive alt text", () => {
+    // 1. Verified photographed products have exact visual descriptions
+    expect(getProductImageAlt({ slug: "banana-powder", name: "Banana Powder" })).toBe(
+      "Fine raw green banana powder in a wooden bowl with sliced bananas"
+    );
+    expect(getProductImageAlt({ slug: "moringa-powder", name: "Moringa Powder" })).toBe(
+      "Pure solar-dehydrated moringa leaf powder on a rustic wooden surface"
+    );
+    expect(getProductImageAlt({ slug: "curry-leaves-powder", name: "Curry Leaves Powder" })).toBe(
+      "Dehydrated green curry leaf powder in a bowl with fresh curry leaves"
+    );
+
+    // 2. Flower and petal products use botanical petals wording, not powder
+    expect(
+      getProductImageAlt({
+        slug: "desi-gulabi-rose-petals-dried",
+        name: "Desi Gulabi Rose Petals (Dried)",
+        category: "Flower & Petal Products",
+      })
+    ).toBe("Desi Gulabi Rose Petals (Dried) - Solar-Dried Botanical Petals");
+
+    // 3. Fallback for unphotographed items containing "powder" avoids repetitive suffix
+    expect(getProductImageAlt({ slug: "amla-powder", name: "Amla Powder" })).toBe(
+      "Amla Powder - Natural Solar Dehydrated"
+    );
+    expect(getProductImageAlt({ slug: "beetroot-powder", name: "Beetroot Powder" })).toBe(
+      "Beetroot Powder - Natural Solar Dehydrated"
+    );
+    expect(getProductImageAlt({ name: "Tomato Powder" })).not.toContain(
+      "Powder - Solar Dehydrated Powder"
+    );
+  });
 
   test("Inactive / regulatory review products strictly return HTTP 404 when visited directly", async ({
     page,
